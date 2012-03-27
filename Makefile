@@ -1,18 +1,26 @@
-all: bin spec
+EXTLIB_CONF=lib/cspec/Makefile
 
-libraries: lib/cspec/Makefile
-	@echo Compiling external libraries...
+# SHELL COLORS
+BLUE_BG="\033[0;44m"
+NO_COLOR="\033[00m"
+
+all: bin spec
+	@echo $?
+
+libraries: $(EXTLIB_CONF)
+	@echo $(BLUE_BG)Compiling external libraries...$(NO_COLOR)
 	$(MAKE) -C lib/cspec/
 
-lib/cspec/Makefile:
+$(EXTLIB_CONF):
+	@echo $(BLUE_BG)Configuring external libraries...$(NO_COLOR)
 	cd lib/cspec && ./autogen.sh && ./configure
 
 bin: libraries
-	@echo Compiling binaries...
+	@echo $(BLUE_BG)Compiling binaries...$(NO_COLOR)
 	$(MAKE) -C src/
 
 spec: libraries bin
-	@echo Compiling specs...
+	@echo $(BLUE_BG)Compiling specs...$(NO_COLOR)
 	$(MAKE) -C spec/
 
 clean:
