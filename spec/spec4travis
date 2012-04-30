@@ -6,12 +6,15 @@ start_time = Time.now
 result = `#{spec_path}`
 end_time = Time.now
 
-ok   = result.grep( /OK: / ).size
+ok = result.grep( /OK: / ).size
 fail = result.grep( /Failed: / ).size
+pending = result.grep( /Pending: / ).size
 
 # Nice output
 puts result
 puts "Finished in #{end_time-start_time} seconds"
-puts "#{ok+fail} examples, #{fail} failures"
+status = "#{ok+fail+pending} examples, #{fail} failures"
+status += ", #{pending} pending" unless pending.zero?
+puts status
 
 exit 1 if fail > 0
