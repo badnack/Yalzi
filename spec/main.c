@@ -2,10 +2,8 @@
 #include "cspec_output_verbose.h"
 
 
-DEFINE_DESCRIPTION( bit_open )
-
 int main() {
-  CSpec_Run( DESCRIPTION( bit_open ), CSpec_NewOutputVerbose() );
+  bitio_spec();
 
   return 0;
 }
