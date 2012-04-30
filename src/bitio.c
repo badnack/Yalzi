@@ -27,25 +27,26 @@ struct bitfile* bit_open( char* name, int mode ) {
 }
 
 
-int bit_close( struct bitfile* p ){
+int bit_close( struct bitfile* p ) {
   int offs = p->pos / 8;
+  if ( p->pos % 8 != 0 )  offs++;
+
   write( p->fd, p->buff, offs );
   close( p->fd );
-  /* puts( p->buff ); */
   bzero( p, sizeof( struct bitfile ) );
   free( p );
   return 0;
 }
 
 
-int bit_write( struct bitfile* p, uint64_t dato, int len ){
-  int i = 0;
-  int offs = p->pos / 8;
-  int k    = p->pos % 8;
+int bit_write( struct bitfile* p, uint64_t data, int len ) {
+  int i, offs, k;
   unsigned char word;
 
-  for ( ; i < len; i++ ) {
-    word = ( dato & ( 1LL << i )) ? 1 : 0;
+  for ( i = 0; i < len; i++ ) {
+    offs = p->pos / 8;
+    k    = p->pos % 8;
+    word = ( data & ( 1LL << i )) ? 1 : 0;
 
     if ( word == 0 ) {
       p->buff[offs] = p->buff[offs] & ~( 1<<k );
@@ -56,10 +57,11 @@ int bit_write( struct bitfile* p, uint64_t dato, int len ){
 
     p->pos++;
 
-    if ( p->pos >= NMAX*8 ){
+    if ( p->pos == NMAX*8 ){
       write( p->fd, p->buff, NMAX );
       p->pos = 0;
     }
   }
+
   return 0;
 }
