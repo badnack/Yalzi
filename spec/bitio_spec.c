@@ -127,8 +127,19 @@ DESCRIBE( bit_write, " bit_write( struct bitfile* p, uint64_t data, int len )" )
 END_DESCRIBE
 
 
+DESCRIBE( bit_read, " bit_read( ... )" )
+
+  IT( "should read an arbitrary length of bit" )
+    SHOULD_PENDING( "IMPLEMENT ME!" )
+  END_IT
+
+END_DESCRIBE
+
+
+
 void bitio_spec() {
   CSpec_Run( DESCRIPTION( bit_open ),  CSpec_NewOutputVerbose() );
   CSpec_Run( DESCRIPTION( bit_close ), CSpec_NewOutputVerbose() );
   CSpec_Run( DESCRIPTION( bit_write ), CSpec_NewOutputVerbose() );
+  CSpec_Run( DESCRIPTION( bit_read ),  CSpec_NewOutputVerbose() );
 }

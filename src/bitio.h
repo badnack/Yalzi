@@ -1,3 +1,6 @@
+#ifndef _BITIO_H_
+#define _BITIO_H_
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdint.h>
@@ -24,3 +27,5 @@ int bit_read( struct bitfile*, uint64_t, int );
 int bit_write( struct bitfile*, uint64_t, int );
 
 int bit_close( struct bitfile* );
+
+#endif /* _BITIO_H_ */
