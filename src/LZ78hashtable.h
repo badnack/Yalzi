@@ -1,0 +1,84 @@
+/**
+ * @file hashtable.h
+ *
+ * @author Nilo Redini
+ * @author Francesco Disperati
+ * @author Davide Pellegrino
+ * Variables and functions definitions for LZ78 hash table
+ *
+*/
+
+
+#ifndef HASHTABLE_H
+#define HASHTABLE_H
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+
+/** Hash table size */
+#define HASHTABLE_SIZE 8388608 /* 24 bit */
+/** Maximum amount of nodes allowed */
+#define MAXNODES 4194303 /* 22 bit */
+/** Root node code */
+#define ROOT 0
+
+/** hashtable definition */
+typedef struct hashtable_entry hashtable_entry;
+typedef struct hashtable_entry hashtable;
+
+/** LZ78 Hash table entry definition*/
+struct hashtable_entry{
+  /* Key */
+  /** father label */
+  uint32_t f_label;
+  /** child value */
+  uint8_t c_value; /* ASCII? #FIXME */
+  /* Value */
+  /** child label */
+  uint32_t c_label;
+};
+
+/**
+   Initializes a LZ78 hash table.
+
+   @return a pointer to the LZ78 hashtable. On  error, a pointer to NULL is returned.
+*/
+hashtable* hashtable_create(void);
+
+/**
+   Insert an entry in a LZ78 hash table.
+
+     @param ht LZ78 hash table.
+     @param f_label Father label
+     @param c_label Child label
+     @param c_value Child character value
+     @return zero on success. On error, -1 is returned, and errno is set appropriately.
+*/
+int hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_value);
+
+/**
+   Deletes the whole LZ78 hash table.
+
+   @param ht LZ78 hash table.
+*/
+void hashtable_destroy(hashtable* ht);
+
+/**
+   Reset the whole LZ78 hash table.
+
+   @param ht LZ78 hash table.
+   @return zero on success. On error, -1 is returned, and errno is set appropriately.
+*/
+int hashtable_reset(hashtable* ht);
+
+/* Test functions */
+/**
+   Prints a LZ78 hash table.
+
+   @param ht  LZ78 hash table.
+*/
+void hashtable_print(hashtable* ht);
+
+#endif
