@@ -19,9 +19,11 @@
 /** GCC check */
 #if __GNUC__
 #if __x86_64__ || __ppc64__
+#define ARCH 64
 #define FULLMASK 0xFFFFFFFFFFFFFFFF
 typedef uint64_t env_var;
 #else
+#define ARCH 32
 #define FULLMASK 0xFFFFFFFF
 typedef uint32_t env_var;
 #endif

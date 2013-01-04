@@ -30,18 +30,23 @@ store_buffer(BITIO* bip, size_t count)
   ssize_t written_bytes = 0;
   uint8_t* buffer;
 
-
   if(bip == NULL || count > BUFBYTES || !count){
     errno = EINVAL;
     return -1;
   }
+
   buffer = (uint8_t*)bip->buf;
   for(; n--;) /* Portability */
-    bip->buf[n] = htole32(bip->buf[n]);
-  n = 0;
+    if(ARCH == 32){
+      bip->buf[n] = htole32(bip->buf[n]);
+    } else {
+      bip->buf[n] = htole64(bip->buf[n]);
+    }
 
+
+  n = 0;
   while(n < count){
-    written_bytes = write(bip->fd, buffer + n, count - n);
+    written_bytes = write(bip->fd, (uint8_t*)(buffer + n), count - n);
     if(written_bytes == -1)
       return -1;
     n += written_bytes;
@@ -81,8 +86,12 @@ load_buffer(BITIO* bip, size_t count)
     bip->buf[n] &= ((((env_var)1) << offset * 8) - 1);
   }
 
-  for(; n--;)
-    bip->buf[n] = le32toh(bip->buf[n]);
+  for(; n--;) /* Portability */
+    if(ARCH == 32){
+      bip->buf[n] = le32toh(bip->buf[n]);
+    } else {
+      bip->buf[n] = le64toh(bip->buf[n]);
+    }
 
   return read_bytes;
 }
@@ -137,18 +146,18 @@ fix_read(BITIO* bip, env_var* dst, size_t dst_len)
   }
 
   while(dst_len > 0){
-    if(bip->first >= BUFCELLS * CELLSIZE || bip->empty == bip->first){
+    if(bip->first >= BUFCELLS * CELLSIZE || bip->empty <= bip->first){
       err = load_buffer(bip, BUFBYTES);
       if(err == -1)
         return -1;
-      if(err == 0)
-        return 0;
       bip->first = 0;
       bip->empty = err * 8;
+      if(bip->empty == 0)
+        return read_bits;
     }
     index = (bip->first) / CELLSIZE;
     offset = (bip->first) % CELLSIZE;
-    bits_to_read = min(CELLSIZE - offset, dst_len);
+    bits_to_read = min(CELLSIZE - offset, min(dst_len, bip->empty - bip->first));
     mask = (bits_to_read == CELLSIZE)? FULLMASK : (((((env_var)1) << bits_to_read) - 1) << offset);
     *dst &= ~((((env_var)1 << bits_to_read) - 1) << read_bits);
     *dst |= (offset - read_bits > 0)? ((env_var)(bip->buf[index] & mask) >> (offset - read_bits)) : ((env_var)(bip->buf[index] & mask) << (read_bits - offset));
@@ -174,12 +183,13 @@ bitio_open(char* name, int mode)
   if((fd = open(name, (mode == O_RDONLY ? O_RDONLY:(O_WRONLY | O_CREAT | O_TRUNC)), 0644)) < 0)
     return NULL;
 
-  if((bf = calloc(1, sizeof(BITIO))) == NULL){
+  if((bf = (BITIO*) calloc(1, sizeof(BITIO))) == NULL){
     close(fd);
     errno = ENOMEM;
     return NULL;
   }
 
+  memset(bf, 0, sizeof(BITIO));
   bf->fd = fd;
   bf->mode = mode;
 
@@ -254,7 +264,7 @@ bitio_close(BITIO* bip)
     index = bip->empty / CELLSIZE;
     if((offset = (bip->empty % CELLSIZE)))
       bip->buf[index] &= ((env_var)1 << offset) - 1;
-    store_buffer(bip,  index*sizeof(env_var) + (offset/8) + (offset > 0));
+    store_buffer(bip,  index*sizeof(env_var) + (offset/8) + ((offset%8) > 0));
   }
 
   err = close(bip->fd);
