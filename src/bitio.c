@@ -118,7 +118,7 @@ fix_write(BITIO* bip, env_var src, size_t src_len)
     bip->buf[index] |= (src & mask) << offset;
     src_len -= bits_to_write;
     bip->empty += bits_to_write;
-    if(bip->empty >= (BUFCELLS * CELLSIZE)){
+    if(bip->empty >= BUFCELLS*CELLSIZE){
       if(store_buffer(bip, BUFBYTES) == -1)
         return -1;
       bip->empty = 0;
