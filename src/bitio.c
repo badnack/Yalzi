@@ -219,7 +219,7 @@ bitio_read(BITIO* bip, void* dst, size_t dst_len)
   int i,size;
   env_var* data = (env_var*) dst;
 
-  if(dst == NULL || bip == NULL || !dst_len || dst_len > CELLSIZE){
+  if(dst == NULL || bip == NULL || !dst_len){
     errno = EINVAL;
     return -1;
   }
@@ -230,7 +230,7 @@ bitio_read(BITIO* bip, void* dst, size_t dst_len)
 
   for(i = 0; i < b_steps; i++){
     size = (dst_len > sizeof(env_var) * 8) ? (sizeof(env_var)*8) : dst_len;
-    if(read_bits += fix_read(bip, &data[i], size) <= 0)
+    if((read_bits += fix_read(bip, &data[i], size)) <= 0)
       return -1;
     dst_len -= size;
   }
