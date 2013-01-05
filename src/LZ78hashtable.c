@@ -2,7 +2,7 @@
 
 /* INLINE? */
 static uint32_t
-hashtable_get_hash(uint32_t f_label, uint8_t c_value)
+get_hash(uint32_t f_label, uint8_t c_value)
 {
   return ((f_label ^ 0x000000FF) *
            ((f_label ^ 0x0000FF00) >> 8) *
@@ -19,7 +19,7 @@ init_dictionary(hashtable* ht)
   if(ht == NULL)
     return -1;
 
-  memset(ht, 0,HASHTABLE_SIZE * sizeof(hashtable));
+  memset(ht, 0, HASHTABLE_SIZE * sizeof(hashtable));
 
   for(i = 0; i < 256; i++){
     if(hashtable_insert(ht, ROOT, i, i+1) == -1){
@@ -39,8 +39,7 @@ hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_va
   if(ht == NULL || c_label > MAXNODES)
     return -1;
 
-  index = hashtable_get_hash(f_label, c_value);
-
+  index = get_hash(f_label, c_value);
   while(ht[index].c_label){
     if((index = (index + 1) % HASHTABLE_SIZE) == MAXNODES)
       return -1;
@@ -53,6 +52,22 @@ hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_va
   return 0;
 }
 
+uint32_t
+hashtable_get_index(hashtable* ht, uint32_t f_label, uint8_t c_value)
+{
+  uint32_t h_index;
+
+  if(ht == NULL)
+    return -1;
+
+  h_index = get_hash(f_label, c_value);
+
+  while(ht[h_index].c_label && (ht[h_index].c_value != c_value || ht[h_index].f_label != f_label))
+    h_index = (h_index + 1) % MAXNODES;
+
+  return ht[h_index].c_label;
+}
+
 /*FIXME set errno!!!*/
 hashtable*
 hashtable_create()
@@ -63,7 +78,6 @@ hashtable_create()
     return NULL;
   if(init_dictionary(ht) == -1)
     return NULL;
-
   return ht;
 }
 
@@ -84,7 +98,7 @@ void
 hashtable_print(hashtable* ht)
 {
   int i, valid;
-  
+
   if(ht == NULL)
     return;
 
