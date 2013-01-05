@@ -21,9 +21,8 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
   if((ht = hashtable_create()) == NULL)
     return -1;
 
-  f_label = root;
-  c_label_count = 257;
-  index_length = 9;
+  f_label =   c_label_count = FIRSTAVCHILD;
+  index_length = FISTMASKLEN;
   index_mask = (1 << index_length) - 1;
   /* if((test = bitio_open("/home/badnack/lol.jpg", O_WRONLY)) == NULL) */
   /*   printf("NULL"); */
@@ -50,8 +49,8 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
 
         if(c_label_count == MAXNODES){
           hashtable_reset(ht); //FIXME add checks
-          c_label_count = 257;
-          index_length = 9;
+          c_label_count = FIRSTAVCHILD;
+          index_length = FISTMASKLEN;
           index_mask = (1 << index_length) - 1;
           f_label = ROOT;
         }

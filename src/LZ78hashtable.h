@@ -23,9 +23,14 @@
 #define MAXNODES 4194303 /* 22 bit */
 /** Root node code */
 #define ROOT 0
+/** First available child label */
+#define FIRSTAVCHILD 257
+/** Length of the fist index mask */
+#define FISTMASKLEN 9
 
-/** hashtable definition */
+/** hashtable entry definition */
 typedef struct hashtable_entry hashtable_entry;
+/** hashtable definition */
 typedef struct hashtable_entry hashtable;
 
 /** LZ78 Hash table entry definition*/
