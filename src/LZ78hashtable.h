@@ -26,7 +26,7 @@
 /** First available child label */
 #define FIRSTAVCHILD 257
 /** Length of the fist index mask */
-#define FISTMASKLEN 9
+#define FIRSTINDEXLEN 9
 
 /** hashtable entry definition */
 typedef struct hashtable_entry hashtable_entry;

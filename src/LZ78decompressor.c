@@ -56,7 +56,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   if((dt = dec_table_create()) == NULL)
     return -1;
 
-  index_length = FISTMASKLEN;
+  index_length = FIRSTINDEXLEN;
   index_mask = (1 << index_length) - 1;
   c_label = FIRSTAVCHILD;
   err_val = 0;
@@ -71,6 +71,19 @@ decompress(BITIO* in_file, BITIO* out_file)
 
     if(current_index == ROOT)
       break;
+
+    //....
+
+    c_label++;
+    if(!(c_label & index_length)){
+      index_length++;
+      index_mask = (index_length << 1) | 1;
+    }
+    if(c_label == MAXNODES){
+      c_label = FIRSTAVCHILD;
+      index_length = FIRSTINDEXLEN;
+      index_mask = (1 << index_length) - 1;
+    }
 
   }
 
