@@ -116,7 +116,7 @@ fix_write(BITIO* bip, env_var src, size_t src_len)
     offset = (bip->empty) % CELLSIZE;
     bits_to_write = min(CELLSIZE - offset, src_len);
     mask = (bits_to_write == CELLSIZE) ? FULLMASK : ((((env_var)1) << bits_to_write) - 1);
-    bip->buf[index] &= (bits_to_write == CELLSIZE) ? 0 : (((env_var)1) << offset) - 1;
+    bip->buf[index] &= /* (bits_to_write == CELLSIZE) ? 0 : */ (((env_var)1) << offset) - 1;
     bip->buf[index] |= (src & mask) << offset;
     src_len -= bits_to_write;
     bip->empty += bits_to_write;
@@ -158,9 +158,9 @@ fix_read(BITIO* bip, env_var* dst, size_t dst_len)
     }
     index = (bip->first) / CELLSIZE;
     offset = (bip->first) % CELLSIZE;
-    bits_to_read = /* min(CELLSIZE - offset,  */min(dst_len, bip->empty - bip->first)/* ) */;
+    bits_to_read = min(CELLSIZE - offset, min(dst_len, bip->empty - bip->first));
     mask = (bits_to_read == CELLSIZE) ? FULLMASK : (((((env_var)1) << bits_to_read) - 1) << offset);
-    *dst &= (bits_to_read == CELLSIZE) ? 0 : ~((((env_var)1 << bits_to_read) - 1) << read_bits);
+    *dst &= /* (bits_to_read == CELLSIZE) ? 0 : */ ~((((env_var)1 << bits_to_read) - 1) << read_bits);
     *dst |= (offset - read_bits > 0) ? ((env_var)(bip->buf[index] & mask) >> (offset - read_bits)) : ((env_var)(bip->buf[index] & mask) << (read_bits - offset));
     dst_len -= bits_to_read;
     bip->first += bits_to_read;

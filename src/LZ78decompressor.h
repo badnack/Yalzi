@@ -23,10 +23,12 @@ typedef struct dec_table_entry dec_table;
 struct dec_table_entry{
   /** Father label */
   uint32_t f_label;
+  /** index length */
+  uint32_t length;
   /** Word associated */
   uint8_t* word;
   /** Word length */
-  uint32_t length;
+  uint32_t buffer_length;
 };
 
 /**

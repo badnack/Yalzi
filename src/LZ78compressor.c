@@ -21,26 +21,26 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
   if((ht = hashtable_create()) == NULL)
     return -1;
 
-  f_label =   c_label_count = FIRSTAVCHILD;
+  c_label_count = FIRSTAVCHILD;
+  f_label = ROOT;
   index_length = FIRSTINDEXLEN;
   index_mask = (1 << index_length) - 1;
-  /* if((test = bitio_open("/home/badnack/lol.jpg", O_WRONLY)) == NULL) */
-  /*   printf("NULL"); */
-  memset(env_buff, 0, BYTEBUFFERSIZE * sizeof(env_var));
+
 
   while(1){ //FIXME change with a function which manages EOF
+  memset(env_buff, 0, BYTEBUFFERSIZE * sizeof(env_var));
     if((bit_read = bitio_read(in_file, env_buff, BYTEBUFFERSIZE * sizeof(env_var) * 8)) <= 0)
       break;
-    byte_buff = (uint8_t*)env_buff;
-    /* bitio_write(test, byte_buff, bit_read); */
 
-    for(i = 0; i < bit_read / 8; i++){
+    byte_buff = (uint8_t*)env_buff;
+
+    for(i = 0; i < ((bit_read / 8) + ((bit_read % 8) > 0)); i++){
 
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){
         bitio_write(out_file, &f_label, index_length); //FIXME add checks
-        hashtable_insert(ht, f_label, byte_buff[i], c_label_count); //also here
-        /* f_label = byte_buff[i] + 1; // next position to start if first 256 are consecutive */
-        f_label = hashtable_get_index(ht, ROOT, byte_buff[i]);
+        hashtable_insert(ht, f_label, c_label_count, byte_buff[i]); //also here
+        f_label = byte_buff[i] + 1; // next position to start if first 256 are consecutive
+        /* f_label = hashtable_get_index(ht, ROOT, byte_buff[i]); */
 
         if(!(++c_label_count & index_mask)){
           index_length++;
