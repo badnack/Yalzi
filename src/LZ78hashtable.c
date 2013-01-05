@@ -4,11 +4,7 @@
 static uint32_t
 get_hash(uint32_t f_label, uint8_t c_value)
 {
-  return ((f_label ^ 0x000000FF) *
-           ((f_label ^ 0x0000FF00) >> 8) *
-           ((f_label ^ 0x00FF0000) >> 16) *
-           ((f_label ^ 0xFF000000) >> 24) ^
-           (c_value ^ 0xFF) ) % HASHTABLE_SIZE;
+  return (((f_label & MAXNODES) << BITSFATHER) | (c_value & 255)); //FIXME: 255 as bits in a define
 }
 
 static int
@@ -21,8 +17,8 @@ init_dictionary(hashtable* ht)
 
   memset(ht, 0, HASHTABLE_SIZE * sizeof(hashtable));
 
-  for(i = 0; i < 256; i++){
-    if(hashtable_insert(ht, ROOT, i, i+1) == -1){
+  for(i = 0; i < FIRSTAVCHILD - 1; i++){
+    if(hashtable_insert(ht, ROOT, i, i) == -1){
       hashtable_destroy(ht);
       return -1;
     }

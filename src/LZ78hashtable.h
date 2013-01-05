@@ -21,7 +21,9 @@
 #define HASHTABLE_SIZE 8388608 /* 24 bit */
 /** Maximum amount of nodes allowed */
 #define MAXNODES 4194303 /* 22 bit */
-/** Root node code */
+/** Bit user for the father index */
+#define BITSFATHER 14
+/** Root nSode code */
 #define ROOT 0
 /** First available child label */
 #define FIRSTAVCHILD 257

@@ -213,7 +213,7 @@ bitio_write(BITIO* bip, void* src, size_t src_len)
   }
 
   for(i = 0; i < b_steps; i++){
-    size = (src_len > sizeof(env_var) * 8) ? ((sizeof(env_var)*8)) : src_len;
+    size = (src_len > (sizeof(env_var) * 8)) ? ((sizeof(env_var) * 8)) : src_len;
     if(fix_write(bip, data[i], size) == -1)
       return -1;
     src_len -= size;
@@ -239,7 +239,7 @@ bitio_read(BITIO* bip, void* dst, size_t dst_len)
   }
 
   for(i = 0; i < b_steps; i++){
-    size = (dst_len > sizeof(env_var) * 8) ? (sizeof(env_var)*8) : dst_len;
+    size = (dst_len > (sizeof(env_var) * 8)) ? (sizeof(env_var) * 8) : dst_len;
     if((read_bits += fix_read(bip, &data[i], size)) <= 0)
       return -1;
     dst_len -= size;
@@ -264,7 +264,7 @@ bitio_close(BITIO* bip)
     index = bip->empty / CELLSIZE;
     if((offset = (bip->empty % CELLSIZE)))
       bip->buf[index] &= ((env_var)1 << offset) - 1;
-    store_buffer(bip,  index*sizeof(env_var) + (offset/8) + ((offset%8) > 0));
+    store_buffer(bip,  index*sizeof(env_var) + (offset / 8) + ((offset % 8) > 0));
   }
 
   err = close(bip->fd);

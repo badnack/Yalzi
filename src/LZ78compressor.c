@@ -39,7 +39,7 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){
         bitio_write(out_file, &f_label, index_length); //FIXME add checks
         hashtable_insert(ht, f_label, byte_buff[i], c_label_count); //also here
-        /* f_label = byte_buff[i] + 1; // next position to start */
+        /* f_label = byte_buff[i] + 1; // next position to start if first 256 are consecutive */
         f_label = hashtable_get_index(ht, ROOT, byte_buff[i]);
 
         if(!(++c_label_count & index_mask)){

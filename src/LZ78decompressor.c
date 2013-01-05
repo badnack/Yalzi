@@ -47,6 +47,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   size_t index_length;
   uint32_t c_label;
   dec_table* dt;
+  dec_table_entry* dte;
 
   if(in_file == NULL || out_file == NULL){
     errno = EINVAL;
@@ -71,10 +72,22 @@ decompress(BITIO* in_file, BITIO* out_file)
 
     if(current_index == ROOT)
       break;
+    
+    dte = &dt[current_index];
 
-    //....
+    if(c_label > FIRSTAVCHILD){
+      //....          
+    }
 
+    if(bitio_write(out_file, dte->word, dte->length * 8) == -1){
+      err_val = -1;
+      break;
+    }
+
+    dte = &dt[c_label];
+    dte->f_label = current_index;
     c_label++;
+
     if(!(c_label & index_length)){
       index_length++;
       index_mask = (index_length << 1) | 1;
@@ -84,7 +97,6 @@ decompress(BITIO* in_file, BITIO* out_file)
       index_length = FIRSTINDEXLEN;
       index_mask = (1 << index_length) - 1;
     }
-
   }
 
   dec_table_destroy(dt);
