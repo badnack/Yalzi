@@ -4,7 +4,7 @@
 
 int main() {
   bitio_spec();
-  hash_spec();
+  /* hash_spec(); */
 
   return 0;
 }
