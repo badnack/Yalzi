@@ -15,7 +15,7 @@ main(){
   if((out_file = bitio_open("/tmp/asd.jpg.yz", O_WRONLY)) == NULL)
     return -1;
 
-  lz78_compress(in_file, out_file);
+  compress(in_file, out_file);
   bitio_close(in_file);
   bitio_close(out_file);
 

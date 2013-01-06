@@ -1,9 +1,10 @@
+#include <fcntl.h>
+#include <errno.h>
 #include "LZ78compressor.h"
 #include "LZ78hashtable.h"
-#include <fcntl.h>
 
 int
-lz78_compress(BITIO* in_file, BITIO* out_file)
+compress(BITIO* in_file, BITIO* out_file)
 {
   hashtable* ht;
   int byte_read, i, err_val;
@@ -14,11 +15,12 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
   env_var root = ROOT;
   FILE* in_buffered_file;
 
-  if(in_file == NULL || out_file == NULL)
+  if(in_file == NULL || out_file == NULL){
+    errno = EINVAL;
     return -1;
+  }
   if((ht = hashtable_create()) == NULL)
     return -1;
-
   if((in_buffered_file = fdopen(in_file->fd, "r")) == NULL)
     return -1;
 
@@ -30,9 +32,11 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
   memset(byte_buff, 0, BYTEBUFFERSIZE * sizeof(uint8_t));
 
   while(!feof(in_buffered_file) && !ferror(in_buffered_file) && !err_val){
+
     byte_read = fread(byte_buff, 1, BYTEBUFFERSIZE * sizeof(uint8_t), in_buffered_file);
 
     for(i = 0; i < byte_read; i++){
+
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){
         if(bitio_write(out_file, &f_label, index_length) == -1 ||
            hashtable_insert(ht, f_label, c_label_count, byte_buff[i]) == -1){
@@ -62,9 +66,14 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
 
   }
 
-  if(bitio_write(out_file, &f_label, index_length) == -1 ||
-     bitio_write(out_file, &root, index_length) == -1)
+  if(ferror(in_buffered_file)){
+    errno = EBADFD;
     err_val = -1;
+  } else {
+    if(bitio_write(out_file, &f_label, index_length) == -1 ||
+       bitio_write(out_file, &root, index_length) == -1)
+      err_val = -1;
+  }
 
   bitio_flush(out_file);
   hashtable_destroy(ht);

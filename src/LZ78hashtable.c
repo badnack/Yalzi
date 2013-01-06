@@ -1,9 +1,9 @@
 #include "LZ78hashtable.h"
 
 static inline uint32_t
-get_hash(uint32_t f_label, uint8_t c_value)
+get_hash(uint32_t k1, uint8_t k2)
 {
-  return (((f_label & MAXNODES) << BITSFATHER) | (c_value & 255)) % MAXNODES; //FIXME: 255 as bits in a define
+  return (((k1 & MAXK1VALUE) << 8) | (k2 & MAXK2VALUE))  & (HASHTABLE_SIZE - 1);
 }
 
 static int
@@ -35,10 +35,8 @@ hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_va
     return -1;
 
   index = get_hash(f_label, c_value);
-  while(ht[index].c_label){
-    if((index = (index + 1) % HASHTABLE_SIZE) == MAXNODES)
-      return -1;
-  }
+  while(ht[index].c_label)
+    index = (index + 1) & (HASHTABLE_SIZE - 1);
 
   ht[index].c_label = c_label;
   ht[index].f_label = f_label;
@@ -63,7 +61,6 @@ hashtable_get_index(hashtable* ht, uint32_t f_label, uint8_t c_value)
   return ht[h_index].c_label;
 }
 
-/*FIXME set errno!!!*/
 hashtable*
 hashtable_create()
 {
@@ -87,20 +84,4 @@ hashtable_destroy(hashtable* ht)
 {
   memset(ht, 0, HASHTABLE_SIZE* sizeof(hashtable));
   free(ht);
-}
-
-void
-hashtable_print(hashtable* ht)
-{
-  int i, valid;
-
-  if(ht == NULL)
-    return;
-
-  for(valid = i = 0; i < HASHTABLE_SIZE; i++){
-    if(ht[i].c_label){
-      valid++;
-      printf("%i)\n Father label: %i.\n Child label: %i.\n Child value: %c.\n\n", valid, ht[i].f_label, ht[i].c_label, ht[i].c_value);
-    }
-  }
 }

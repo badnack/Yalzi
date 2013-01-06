@@ -22,7 +22,9 @@
 /** Maximum amount of nodes allowed */
 #define MAXNODES 4194303 /* 22 bit */
 /** Bit user for the father index */
-#define BITSFATHER 14
+#define MAXK1VALUE ((uint32_t)1 << 14) - 1
+/** Bit user for the father index */
+#define MAXK2VALUE ((uint32_t)1 << 8) - 1
 /** Root nSode code */
 #define ROOT 0
 /** First available child label */
@@ -41,7 +43,7 @@ struct hashtable_entry{
   /** father label */
   uint32_t f_label;
   /** child value */
-  uint8_t c_value; /* ASCII? #FIXME */
+  uint8_t c_value;
   /* Value */
   /** child label */
   uint32_t c_label;
@@ -79,13 +81,5 @@ void hashtable_destroy(hashtable* ht);
    @return zero on success. On error, -1 is returned, and errno is set appropriately.
 */
 int hashtable_reset(hashtable* ht);
-
-/* Test functions */
-/**
-   Prints a LZ78 hash table.
-
-   @param ht  LZ78 hash table.
-*/
-void hashtable_print(hashtable* ht);
 
 #endif

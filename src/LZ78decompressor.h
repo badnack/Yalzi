@@ -28,7 +28,7 @@ struct dec_table_entry{
   /** Word associated */
   uint8_t* word;
   /** Word length */
-  uint32_t buffer_length;
+  uint32_t word_length;
 };
 
 /**

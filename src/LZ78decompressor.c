@@ -4,9 +4,9 @@
 static void
 pre_append(dec_table* current, dec_table* parent)
 {
-    if(current->buffer_length < (current->length + parent->length)){
-      current->buffer_length = current->length + parent->length;
-      current->word = realloc(current->word, current->buffer_length);
+    if(current->word_length < (current->length + parent->length)){
+      current->word_length = current->length + parent->length;
+      current->word = realloc(current->word, current->word_length);
     }
     if(current->length > 0){
       memmove(current->word + parent->length, current->word, current->length);
@@ -72,11 +72,8 @@ decompress(BITIO* in_file, BITIO* out_file)
     return -1;
   }
 
-  if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL){
-    errno = EINVAL;
+  if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL)
     return -1;
-  }
-
   if((dt = dec_table_create()) == NULL)
     return -1;
 
@@ -89,7 +86,6 @@ decompress(BITIO* in_file, BITIO* out_file)
     current_index = 0;
     if(bitio_read(in_file, &current_index, index_length) < index_length || current_index > c_label){
       err_val = -1;
-      printf("erro 0");
       break;
     }
 
@@ -111,20 +107,19 @@ decompress(BITIO* in_file, BITIO* out_file)
         }
         pre_append(last, dte);
         last->length++;
-        if(last->buffer_length < last->length){
-          last->buffer_length = last->length;
-          last->word = realloc(last->word, last->buffer_length);
+        if(last->word_length < last->length){
+          last->word_length = last->length;
+          last->word = realloc(last->word, last->word_length);
         }
         last->word[last->length - 1] =  last->word[0];
       }
       else{
-        if(last->buffer_length == 0){
-          last->buffer_length = 1;
+        if(last->word_length == 0){
+          last->word_length = 1;
           last->word = realloc(last->word, 1);
         }
         last->length = 1;
         if(last->word == NULL){
-          printf("erro 1");      
           err_val = -1;
           break;
         }
@@ -145,7 +140,6 @@ decompress(BITIO* in_file, BITIO* out_file)
 
     if(fwrite(current->word, 1, current->length, out_buffered_file) != current->length){
       err_val = -1;
-      printf("erro 2");
       break;
     }
 
@@ -165,6 +159,6 @@ decompress(BITIO* in_file, BITIO* out_file)
 
   dec_table_destroy(dt);
   fflush(out_buffered_file);
-  
+
   return err_val;
 }
