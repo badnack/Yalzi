@@ -65,8 +65,14 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_entry* current;
   dec_table_entry* last;
   dec_table_entry* dte;
+  FILE* out_buffered_file;
 
   if(in_file == NULL || out_file == NULL){
+    errno = EINVAL;
+    return -1;
+  }
+
+  if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL){
     errno = EINVAL;
     return -1;
   }
@@ -135,7 +141,8 @@ decompress(BITIO* in_file, BITIO* out_file)
       }
     }
 
-    if(current->length != 0 && bitio_write(out_file, current->word, current->length*8) == -1){
+    /* if(current->length != 0 && bitio_write(out_file, current->word, current->length*8) == -1){ */
+    if(current->length != (unsigned int) 0 && fwrite(current->word, 1, current->length, out_buffered_file) <= 0){
       err_val = -1;
       break;
     }

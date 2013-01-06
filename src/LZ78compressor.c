@@ -2,24 +2,29 @@
 #include "LZ78hashtable.h"
 #include <fcntl.h>
 
-
 int
 lz78_compress(BITIO* in_file, BITIO* out_file)
 {
   hashtable* ht;
-  int bit_read, i;
+  int byte_read, i;
   env_var env_buff[BYTEBUFFERSIZE];
   uint8_t* byte_buff;
   uint32_t c_label, f_label, index_mask;
   uint32_t c_label_count;
   size_t index_length;
   env_var root = ROOT;//FIXME
+  FILE* in_buffered_file;
   /* BITIO* test; */
 
   if(in_file == NULL || out_file == NULL)
     return -1;
   if((ht = hashtable_create()) == NULL)
     return -1;
+
+  if((in_buffered_file = fdopen(in_file->fd, "r")) == NULL){
+    printf ("suca\n");
+    return -1;
+  }
 
   c_label_count = FIRSTAVCHILD;
   f_label = ROOT;
@@ -28,13 +33,16 @@ lz78_compress(BITIO* in_file, BITIO* out_file)
 
 
   while(1){ //FIXME change with a function which manages EOF
-  memset(env_buff, 0, BYTEBUFFERSIZE * sizeof(env_var));
-    if((bit_read = bitio_read(in_file, env_buff, BYTEBUFFERSIZE * sizeof(env_var) * 8)) <= 0)
+    memset(env_buff, 0, BYTEBUFFERSIZE * sizeof(env_var));
+    /* if((bit_read = bitio_read(in_file, env_buff, BYTEBUFFERSIZE * sizeof(env_var) * 8)) <= 0) */
+    if((byte_read = fread(env_buff, 1, BYTEBUFFERSIZE * sizeof(env_var), in_buffered_file)) <= 0) {
+      printf ("%u suca\n", byte_read);
       break;
+    }
 
     byte_buff = (uint8_t*)env_buff;
 
-    for(i = 0; i < ((bit_read / 8) + ((bit_read % 8) > 0)); i++){
+    for(i = 0; i < byte_read; i++){
 
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){
         bitio_write(out_file, &f_label, index_length); //FIXME add checks
