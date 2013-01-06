@@ -32,11 +32,11 @@ typedef uint32_t env_var;
 /** Buffer memory size */
 #define BUFSIZE 4096
 /** Cell buffer size */
-#define CELLSIZE (sizeof(env_var)*8)
+#define CELLSIZE (sizeof(env_var) * 8)
 /** Amount of cells in the buffer */
-#define BUFCELLS (BUFSIZE/(sizeof(env_var)))
+#define BUFCELLS (BUFSIZE / (sizeof(env_var)))
 /** Buffer bytes size */
-#define BUFBYTES (BUFCELLS*sizeof(env_var))
+#define BUFBYTES (BUFCELLS * sizeof(env_var))
 
 
 /** Bitfile structure */
@@ -94,5 +94,12 @@ int bitio_write(BITIO* bip, void* src, size_t src_len);
    @return zero on success. On error, -1 is returned, and errno is set appropriately.
 */
 int bitio_close(BITIO* bip);
+
+/**
+   Performs the buffer flush operation.
+   
+   @param bip BITIO pointer
+*/
+void bitio_flush(BITIO* bip);
 
 #endif

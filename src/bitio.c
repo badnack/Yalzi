@@ -273,3 +273,21 @@ bitio_close(BITIO* bip)
 
   return err;
 }
+
+void 
+bitio_flush(BITIO* bip)
+{
+  int index, offset;
+  
+  if(bip == NULL)
+    return;
+
+  if(bip->mode == O_WRONLY && bip->empty > 0){
+    index = bip->empty / CELLSIZE;
+    if((offset = (bip->empty % CELLSIZE)))
+      bip->buf[index] &= ((env_var)1 << offset) - 1;
+    store_buffer(bip,  index*sizeof(env_var) + (offset / 8) + ((offset % 8) > 0));
+  }
+
+  memset(bip->buf, 0, BUFBYTES);
+}
