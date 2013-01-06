@@ -7,7 +7,7 @@
 int
 main(){
   BITIO* in_file, *out_file;
-  
+
   // compression
   printf ("Compression\n");
   if((in_file = bitio_open("/tmp/asd.jpg", O_RDONLY)) == NULL)
@@ -20,6 +20,7 @@ main(){
   bitio_close(out_file);
 
   printf ("Decompression\n");
+
   // decompression
   if((in_file = bitio_open("/tmp/asd.jpg.yz", O_RDONLY)) == NULL)
     return -1;

@@ -1,7 +1,6 @@
 #include "LZ78hashtable.h"
 
-/* INLINE? */
-static uint32_t
+static inline uint32_t
 get_hash(uint32_t f_label, uint8_t c_value)
 {
   return (((f_label & MAXNODES) << BITSFATHER) | (c_value & 255)) % MAXNODES; //FIXME: 255 as bits in a define

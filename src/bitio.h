@@ -16,21 +16,21 @@
 #include <stdint.h>
 #include <string.h>
 
-// /** GCC check */
-// #if __GNUC__
-// #if __x86_64__ || __ppc64__
-// #define ARCH 64
-// #define FULLMASK 0xFFFFFFFFFFFFFFFF
-// typedef uint64_t env_var;
-// #else
+/** GCC check */
+#if __GNUC__
+#if __x86_64__ || __ppc64__
+#define ARCH 64
+#define FULLMASK 0xFFFFFFFFFFFFFFFF
+typedef uint64_t env_var;
+#else
 #define ARCH 32
 #define FULLMASK 0xFFFFFFFF
 typedef uint32_t env_var;
-// #endif
-// #endif
+#endif
+#endif
 
 /** Buffer memory size */
-#define BUFSIZE 512
+#define BUFSIZE 4096
 /** Cell buffer size */
 #define CELLSIZE (sizeof(env_var)*8)
 /** Amount of cells in the buffer */
