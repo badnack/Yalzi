@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <fcntl.h>
-#include "LZ78hashtable.h"
+#include "YLZhashtable.h"
 #include "bitio.h"
-#include "LZ78compressor.h"
+#include "YLZcompressor.h"
 
 int
 main(){

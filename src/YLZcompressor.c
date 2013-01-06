@@ -1,7 +1,7 @@
 #include <fcntl.h>
 #include <errno.h>
-#include "LZ78compressor.h"
-#include "LZ78hashtable.h"
+#include "YLZcompressor.h"
+#include "YLZhashtable.h"
 
 int
 compress(BITIO* in_file, BITIO* out_file)

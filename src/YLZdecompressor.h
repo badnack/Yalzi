@@ -11,7 +11,7 @@
 #ifndef _LZ78DECOMPRESSOR_H_
 #define _LZ78DECOMPRESSOR_H_
 
-#include "LZ78hashtable.h"
+#include "YLZhashtable.h"
 #include "bitio.h"
 
 /** Decompressor table entry definition */

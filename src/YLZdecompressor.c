@@ -1,4 +1,4 @@
-#include "LZ78decompressor.h"
+#include "YLZdecompressor.h"
 #include <errno.h>
 
 static void

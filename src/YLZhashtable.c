@@ -1,4 +1,4 @@
-#include "LZ78hashtable.h"
+#include "YLZhashtable.h"
 
 static inline uint32_t
 get_hash(uint32_t k1, uint8_t k2)
