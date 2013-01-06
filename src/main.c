@@ -12,7 +12,7 @@ static int verbose_flag;
 
 void version()
 {
-    printf("Yalzi v%s, (C) 2012-2013 badnack@gmail.com nebirhos@aol.com pelldav@gmail.com\n", VERSION);
+    printf("Yalzi v%s, (C) 2012-2013 n.redini@gmail.com nebirhos@aol.com pelldav@gmail.com\n", VERSION);
 }
 
 void usage()
