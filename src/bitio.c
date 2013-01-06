@@ -286,6 +286,8 @@ bitio_flush(BITIO* bip)
     if((offset = (bip->empty % CELLSIZE)))
       bip->buf[index] &= ((env_var)1 << offset) - 1;
     store_buffer(bip,  index*sizeof(env_var) + (offset / 8) + ((offset % 8) > 0));
+    bip->empty = 0;
+    bip->first = 0;
   }
 
   memset(bip->buf, 0, BUFBYTES);
