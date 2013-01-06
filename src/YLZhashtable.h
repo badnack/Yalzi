@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include "bitio.h"
 
 /** Hash table size */
 #define HASHTABLE_SIZE 8388608 /* 24 bit */
@@ -41,12 +42,12 @@ typedef struct hashtable_entry hashtable;
 struct hashtable_entry{
   /* Key */
   /** father label */
-  uint32_t f_label;
+  env_var f_label;
   /** child value */
-  uint8_t c_value;
+  env_var c_value; //Only 8 bits are used
   /* Value */
   /** child label */
-  uint32_t c_label;
+  env_var c_label;
 };
 
 /**
@@ -65,7 +66,7 @@ hashtable* hashtable_create(void);
      @param c_value Child character value
      @return zero on success. On error, -1 is returned, and errno is set appropriately.
 */
-int hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_value);
+int hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_value);
 
 /**
    Deletes the whole LZ78 hash table.
@@ -81,5 +82,14 @@ void hashtable_destroy(hashtable* ht);
    @return zero on success. On error, -1 is returned, and errno is set appropriately.
 */
 int hashtable_reset(hashtable* ht);
+
+/**
+   Retries the entry index of a hash table, according the values given.
+   
+   @param f_label Father label
+   @param c_value Child character value
+   @return the index value
+*/
+env_var hashtable_get_index(hashtable* ht, env_var f_label, env_var c_value);
 
 #endif

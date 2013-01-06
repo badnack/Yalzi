@@ -1,5 +1,8 @@
 #include "YLZdecompressor.h"
 #include <errno.h>
+#include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 static void
 pre_append(dec_table* current, dec_table* parent)
@@ -14,7 +17,6 @@ pre_append(dec_table* current, dec_table* parent)
     memcpy(current->word, parent->word, parent->length);
     current->length += parent->length;
 }
-
 
 dec_table*
 dec_table_create()
@@ -57,8 +59,8 @@ dec_table_destroy(dec_table* dt)
 int
 decompress(BITIO* in_file, BITIO* out_file)
 {
-  int err_val;
-  uint32_t current_index, index_mask;
+  int err_val, bit_read;
+  env_var current_index, index_mask;
   size_t index_length;
   uint32_t c_label;
   dec_table* dt;
@@ -72,6 +74,8 @@ decompress(BITIO* in_file, BITIO* out_file)
     return -1;
   }
 
+  if(in_file->mode != O_RDONLY || out_file->mode != O_WRONLY)
+    return -1;
   if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL)
     return -1;
   if((dt = dec_table_create()) == NULL)
@@ -84,7 +88,8 @@ decompress(BITIO* in_file, BITIO* out_file)
 
   while(1){
     current_index = 0;
-    if(bitio_read(in_file, &current_index, index_length) < index_length || current_index > c_label){
+    bit_read = bitio_read(in_file, &current_index, index_length);
+    if(bit_read == -1 || (env_var)bit_read < index_length || current_index > c_label){
       err_val = -1;
       break;
     }

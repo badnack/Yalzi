@@ -2,6 +2,9 @@
 #include <errno.h>
 #include "YLZcompressor.h"
 #include "YLZhashtable.h"
+#include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 int
 compress(BITIO* in_file, BITIO* out_file)
@@ -9,8 +12,8 @@ compress(BITIO* in_file, BITIO* out_file)
   hashtable* ht;
   int byte_read, i, err_val;
   uint8_t byte_buff[BYTEBUFFERSIZE];
-  uint32_t c_label, f_label, index_mask;
-  uint32_t c_label_count;
+  env_var c_label, f_label, index_mask;
+  env_var c_label_count;
   size_t index_length;
   env_var root = ROOT;
   FILE* in_buffered_file;

@@ -46,6 +46,8 @@ typedef struct BITIO BITIO;
    Representation of a buffered file.
 */
 struct BITIO{
+  /** File name */
+  char* name;
   /** File descriptor (UNIX std)*/
   int fd;
   /** First available bit file position (used to read) */
@@ -74,7 +76,7 @@ BITIO* bitio_open(char* name, int mode);
    @param dst_len Content length to read.
    @return number of bits read. On error, -1 is returned, and errno is set appropriately.
 */
-int bitio_read(BITIO* bip, void* dst, size_t dst_len);
+int bitio_read(BITIO* bip, env_var* dst, size_t dst_len);
 
 /**
    Writes in a buffered file.
@@ -84,7 +86,7 @@ int bitio_read(BITIO* bip, void* dst, size_t dst_len);
    @param src_len Data len.
    @return zero on success. On error, -1 is returned, and errno is set appropriately.
 */
-int bitio_write(BITIO* bip, void* src, size_t src_len);
+int bitio_write(BITIO* bip, env_var* src, size_t src_len);
 
 /**
    Closes a buffered file.
@@ -97,7 +99,7 @@ int bitio_close(BITIO* bip);
 
 /**
    Performs the buffer flush operation.
-   
+
    @param bip BITIO pointer
 */
 void bitio_flush(BITIO* bip);

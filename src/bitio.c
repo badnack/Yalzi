@@ -5,7 +5,7 @@
  * @author Francesco Disperati
  * @author Davide Pellegrino
  * @author Nilo Redini
- *  Funcrtions to manage buffered operations on a file.
+ *  Functions to manage buffered operations on a file.
  */
 
 #include "bitio.h"
@@ -20,7 +20,7 @@
 inline static int
 min(int x1, int x2)
 {
-  return (x1<=x2)?x1:x2;
+  return (x1 <= x2) ? x1 : x2;
 }
 
 static int
@@ -190,6 +190,7 @@ bitio_open(char* name, int mode)
   }
 
   memset(bf, 0, sizeof(BITIO));
+  bf->name = strdup(name);
   bf->fd = fd;
   bf->mode = mode;
 
@@ -197,11 +198,10 @@ bitio_open(char* name, int mode)
 }
 
 int
-bitio_write(BITIO* bip, void* src, size_t src_len)
+bitio_write(BITIO* bip, env_var* data, size_t src_len)
 {
   int b_steps = src_len / (sizeof(env_var) * 8) + ((src_len % (sizeof(env_var) * 8)) > 0);
   int i,size;
-  env_var* data = (env_var*) src;
 
   if(bip == NULL || data == NULL || src_len <= 0){
     errno = EINVAL;
@@ -222,14 +222,13 @@ bitio_write(BITIO* bip, void* src, size_t src_len)
 }
 
 int
-bitio_read(BITIO* bip, void* dst, size_t dst_len)
+bitio_read(BITIO* bip, env_var* data, size_t dst_len)
 {
   int read_bits = 0;
   int b_steps = dst_len / (sizeof(env_var) * 8) + ((dst_len % (sizeof(env_var) * 8)) > 0);
   int i,size;
-  env_var* data = (env_var*) dst;
 
-  if(dst == NULL || bip == NULL || dst_len <= 0){
+  if(data == NULL || bip == NULL || dst_len <= 0){
     errno = EINVAL;
     return -1;
   }

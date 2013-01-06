@@ -1,9 +1,13 @@
 #include "YLZhashtable.h"
 
 static inline uint32_t
-get_hash(uint32_t k1, uint8_t k2)
+get_hash(env_var k1, env_var k2)
 {
-  return (((k1 & MAXK1VALUE) << 8) | (k2 & MAXK2VALUE))  & (HASHTABLE_SIZE - 1);
+  return ((k1 ^ 0x000000FF) *
+          ((k1 ^ 0x0000FF00) >> 8) *
+          ((k1 ^ 0x00FF0000) >> 16) *
+          ((k1 ^ 0xFF000000) >> 24) ^
+          (k2 ^ 0xFF) ) & (HASHTABLE_SIZE - 1);
 }
 
 static int
@@ -17,7 +21,7 @@ init_dictionary(hashtable* ht)
   memset(ht, 0, HASHTABLE_SIZE * sizeof(hashtable));
 
   for(i = 0; i < FIRSTAVCHILD - 1; i++){
-    if(hashtable_insert(ht, ROOT, (uint32_t)i+1, (uint8_t)i) == -1){
+    if(hashtable_insert(ht, ROOT, (env_var)i+1, (env_var)i) == -1){
       hashtable_destroy(ht);
       return -1;
     }
@@ -27,7 +31,7 @@ init_dictionary(hashtable* ht)
 }
 
 int
-hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_value)
+hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_value)
 {
   uint32_t index;
 
@@ -45,8 +49,8 @@ hashtable_insert(hashtable* ht, uint32_t f_label, uint32_t c_label, uint8_t c_va
   return 0;
 }
 
-uint32_t
-hashtable_get_index(hashtable* ht, uint32_t f_label, uint8_t c_value)
+env_var
+hashtable_get_index(hashtable* ht, env_var f_label, env_var c_value)
 {
   uint32_t h_index;
 

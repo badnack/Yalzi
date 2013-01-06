@@ -3,6 +3,7 @@
 #include "YLZhashtable.h"
 #include "bitio.h"
 #include "YLZcompressor.h"
+#include "YLZdecompressor.h"
 
 int
 main(){
