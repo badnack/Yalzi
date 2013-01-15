@@ -30,7 +30,7 @@ store_buffer(BITIO* bip, size_t count)
   ssize_t written_bytes = 0;
   uint8_t* buffer;
 
-  if(bip == NULL || count > BUFBYTES || !count){
+  if(bip == NULL || bip->fd == -1 || count > BUFBYTES || !count){
     errno = EINVAL;
     return -1;
   }
@@ -49,10 +49,9 @@ store_buffer(BITIO* bip, size_t count)
     written_bytes = write(bip->fd, (uint8_t*)(buffer + n), count - n);
     if(written_bytes == -1)
       return -1;
-
     n += written_bytes;
-
   }
+
   return n;
 }
 
@@ -64,7 +63,7 @@ load_buffer(BITIO* bip, size_t count)
   uint8_t* buffer;
   int offset;
 
-  if(bip == NULL || bip->fd == -1 || !count || count > BUFBYTES){
+  if(bip == NULL || bip->fd == -1 || count < 0 || count > BUFBYTES){
     errno = EINVAL;
     return -1;
   }
@@ -129,7 +128,6 @@ fix_write(BITIO* bip, env_var src, size_t src_len)
   }
 
   return 0;
-
 }
 
 static int
@@ -263,7 +261,7 @@ bitio_close(BITIO* bip)
     index = bip->empty / CELLSIZE;
     if((offset = (bip->empty % CELLSIZE)))
       bip->buf[index] &= ((env_var)1 << offset) - 1;
-    store_buffer(bip,  index*sizeof(env_var) + (offset / 8) + ((offset % 8) > 0));
+    store_buffer(bip,  index * sizeof(env_var) + (offset / 8) + ((offset % 8) > 0));
   }
 
   err = close(bip->fd);
@@ -273,11 +271,11 @@ bitio_close(BITIO* bip)
   return err;
 }
 
-void 
+void
 bitio_flush(BITIO* bip)
 {
   int index, offset;
-  
+
   if(bip == NULL)
     return;
 

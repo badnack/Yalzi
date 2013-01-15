@@ -33,13 +33,11 @@ compress(BITIO* in_file, BITIO* out_file)
   index_mask = (1 << index_length) - 1;
   err_val = 0;
   memset(byte_buff, 0, BYTEBUFFERSIZE * sizeof(uint8_t));
-
   while(!feof(in_buffered_file) && !ferror(in_buffered_file) && !err_val){
 
     byte_read = fread(byte_buff, 1, BYTEBUFFERSIZE * sizeof(uint8_t), in_buffered_file);
 
     for(i = 0; i < byte_read; i++){
-
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){
         if(bitio_write(out_file, &f_label, index_length) == -1 ||
            hashtable_insert(ht, f_label, c_label_count, byte_buff[i]) == -1){
@@ -78,7 +76,9 @@ compress(BITIO* in_file, BITIO* out_file)
       err_val = -1;
   }
 
-  bitio_flush(out_file);
+  if(!err_val)
+    bitio_flush(out_file);
+
   hashtable_destroy(ht);
 
   return err_val;
