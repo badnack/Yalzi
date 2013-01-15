@@ -60,7 +60,7 @@ hashtable_get_index(hashtable* ht, env_var f_label, env_var c_value)
   h_index = get_hash(f_label, c_value);
 
   while(ht[h_index].c_label && (ht[h_index].c_value != c_value || ht[h_index].f_label != f_label))
-    h_index = (h_index + 1) % MAXNODES;
+    h_index = (h_index + 1) % HASHTABLE_SIZE;
 
   return ht[h_index].c_label;
 }
