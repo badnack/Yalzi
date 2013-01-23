@@ -18,13 +18,9 @@
 #include "bitio.h"
 
 /** Hash table size */
-#define HASHTABLE_SIZE 8388608 /* 24 bit */
+#define HASHTABLE_SIZE 16777216 /* 24 bit for the index*/
 /** Maximum amount of nodes allowed */
 #define MAXNODES 4194303 /* 22 bit */
-/** Bit user for the father index */
-#define MAXK1VALUE ((uint32_t)1 << 14) - 1
-/** Bit user for the father index */
-#define MAXK2VALUE ((uint32_t)1 << 8) - 1
 /** Root nSode code */
 #define ROOT 0
 /** First available child label */
@@ -84,7 +80,7 @@ int hashtable_reset(hashtable* ht);
 
 /**
    Retries the entry index of a hash table, according the values given.
-   
+
    @param f_label Father label
    @param c_value Child character value
    @return the index value
