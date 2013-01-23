@@ -54,6 +54,7 @@ dec_table_destroy(dec_table* dt)
       free(dt[n].word);
 
   memset(dt, 0, sizeof(dec_table) * MAXNODES);
+  free(dt);
 }
 
 int
@@ -67,7 +68,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_entry* current;
   dec_table_entry* last;
   dec_table_entry* dte;
-  FILE* out_buffered_file;
+  FILE* out_buffered_file = NULL;
 
   if(in_file == NULL || out_file == NULL){
     errno = EINVAL;
@@ -164,6 +165,7 @@ decompress(BITIO* in_file, BITIO* out_file)
 
   dec_table_destroy(dt);
   fflush(out_buffered_file);
+  fclose(out_buffered_file);
 
   return err_val;
 }

@@ -46,8 +46,6 @@ typedef struct BITIO BITIO;
    Representation of a buffered file.
 */
 struct BITIO{
-  /** File name */
-  char* name;
   /** File descriptor (UNIX std)*/
   int fd;
   /** First available bit file position (used to read) */

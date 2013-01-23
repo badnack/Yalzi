@@ -7,7 +7,7 @@ get_hash(env_var k1, env_var k2)
           ((k1 ^ 0x0000FF00) >> 8) *
           ((k1 ^ 0x00FF0000) >> 16) *
           ((k1 ^ 0xFF000000) >> 24) ^
-          (k2 ^ 0xFF) ) & (HASHTABLE_SIZE - 1);
+          (k2 ^ 0xFF) ) % HASHTABLE_SIZE;
 }
 
 static int
@@ -40,7 +40,7 @@ hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_valu
 
   index = get_hash(f_label, c_value);
   while(ht[index].c_label)
-    index = (index + 1) & (HASHTABLE_SIZE - 1);
+    index = (index + 1) % HASHTABLE_SIZE;
 
   ht[index].c_label = c_label;
   ht[index].f_label = f_label;

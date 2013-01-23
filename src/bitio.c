@@ -188,7 +188,6 @@ bitio_open(char* name, int mode)
   }
 
   memset(bf, 0, sizeof(BITIO));
-  bf->name = strdup(name);
   bf->fd = fd;
   bf->mode = mode;
 

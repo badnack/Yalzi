@@ -16,7 +16,7 @@ compress(BITIO* in_file, BITIO* out_file)
   env_var c_label_count;
   size_t index_length;
   env_var root = ROOT;
-  FILE* in_buffered_file;
+  FILE* in_buffered_file = NULL;
 
   if(in_file == NULL || out_file == NULL){
     errno = EINVAL;
@@ -33,6 +33,7 @@ compress(BITIO* in_file, BITIO* out_file)
   index_mask = (1 << index_length) - 1;
   err_val = 0;
   memset(byte_buff, 0, BYTEBUFFERSIZE * sizeof(uint8_t));
+
   while(!feof(in_buffered_file) && !ferror(in_buffered_file) && !err_val){
 
     byte_read = fread(byte_buff, 1, BYTEBUFFERSIZE * sizeof(uint8_t), in_buffered_file);
@@ -80,6 +81,6 @@ compress(BITIO* in_file, BITIO* out_file)
     bitio_flush(out_file);
 
   hashtable_destroy(ht);
-
+  fclose(in_buffered_file);
   return err_val;
 }
