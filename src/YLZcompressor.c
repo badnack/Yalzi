@@ -1,15 +1,14 @@
 #include <fcntl.h>
 #include <errno.h>
-#include "YLZcompressor.h"
-#include "YLZhashtable.h"
 #include <limits.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
-extern int verbose_flag;
-
+#include "YLZoptions.h"
+#include "YLZcompressor.h"
+#include "YLZhashtable.h"
 
 int
 compress(BITIO* in_file, BITIO* out_file)
@@ -54,6 +53,7 @@ compress(BITIO* in_file, BITIO* out_file)
 
     byte_read = fread(byte_buff, 1, BYTEBUFFERSIZE * sizeof(uint8_t), in_buffered_file);
     file_read += byte_read;
+
     if (verbose_flag){
       percentage = ((file_read*100)/file_length);
       while( percentage >= progress){
@@ -61,6 +61,7 @@ compress(BITIO* in_file, BITIO* out_file)
         fprintf(stdout, "-");
       }
     }
+
     for(i = 0; i < byte_read; i++){
       if((c_label = hashtable_get_index(ht, f_label, byte_buff[i])) == ROOT){ //write the encoding of the max length sequence of char in out_file (when the next hash index is ROOT) 
         if(bitio_write(out_file, &f_label, index_length) == -1 ||
@@ -103,11 +104,11 @@ compress(BITIO* in_file, BITIO* out_file)
   if(!err_val)
     bitio_flush(out_file);
 
+  if (verbose_flag)
+    fprintf(stdout, "\nDestroing Hash Table.\nCompression terminated.\n");
+
   hashtable_destroy(ht);
   fclose(in_buffered_file);
-
-  if (verbose_flag)
-    fprintf(stdout, "Destroing Hash Table.\nCompression terminated.\n");
 
   return err_val;
 }

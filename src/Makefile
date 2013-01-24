@@ -5,7 +5,7 @@ INC = $(wildcard *.h)
 BIN = ../bin/yalzi
 
 CC = gcc
-CFLAGS += -Wall -Wextra -O3 -g #-Werror
+CFLAGS += -Wall -Wextra -D_GNU_SOURCE=1 -O3 -g -Werror
 
 
 all: $(BIN)
