@@ -3,6 +3,10 @@
 #include <limits.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+extern int verbose_flag;
 
 static void
 pre_append(dec_table* current, dec_table* parent)
@@ -69,6 +73,9 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_entry* last;
   dec_table_entry* dte;
   FILE* out_buffered_file = NULL;
+  off_t file_length, file_read;
+  struct stat file_stat;
+  int progress = 0, percentage = 0;
 
   if(in_file == NULL || out_file == NULL){
     errno = EINVAL;
@@ -79,17 +86,33 @@ decompress(BITIO* in_file, BITIO* out_file)
     return -1;
   if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL)
     return -1;
+  if(verbose_flag) 
+    fprintf(stdout, "Inizialize Hash Table\n");
   if((dt = dec_table_create()) == NULL)
     return -1;
-
+  if(fstat(in_file->fd,&file_stat) < 0)    
+    return 1;
+  
+  file_length = file_stat.st_size;
   index_length = FIRSTINDEXLEN;
   index_mask = (1 << index_length) - 1;
   c_label = FIRSTAVCHILD;
   err_val = 0;
+  if (verbose_flag){
+    fprintf(stdout, "Start decompressing ... \nPercentage of the Decompressed File\n0         50         100\n");
+  }
 
   while(1){
     current_index = 0;
     bit_read = bitio_read(in_file, &current_index, index_length);
+    file_read += bit_read/8;
+    if (verbose_flag){
+      percentage = ((file_read*100)/file_length);
+      while( percentage >= progress){
+        progress = progress + 5;
+        fprintf(stdout, "-");
+      }
+    }
     if(bit_read == -1 || (env_var)bit_read < index_length || current_index > c_label){
       err_val = -1;
       break;
@@ -166,6 +189,9 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_destroy(dt);
   fflush(out_buffered_file);
   fclose(out_buffered_file);
+  if (verbose_flag){
+    fprintf(stdout, "Destroy Hash Table.\nCompression terminate.\n");
+  }
 
   return err_val;
 }

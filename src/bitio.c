@@ -63,7 +63,7 @@ load_buffer(BITIO* bip, size_t count)
   uint8_t* buffer;
   int offset;
 
-  if(bip == NULL || bip->fd == -1 || count < 0 || count > BUFBYTES){
+  if(bip == NULL || bip->fd == -1 || count <= 0 || count > BUFBYTES){
     errno = EINVAL;
     return -1;
   }

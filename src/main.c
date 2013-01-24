@@ -5,39 +5,41 @@
 #include "YLZcompressor.h"
 #include "YLZdecompressor.h"
 #include <getopt.h>
+#define _GNU_SOURCE
 
 #define VERSION "0.1.0"
 
-static int verbose_flag;
+int verbose_flag;
 
 void version()
 {
-    printf("Yalzi v%s, (C) 2012-2013 n.redini@gmail.com nebirhos@aol.com pelldav@gmail.com\n", VERSION);
+  fprintf(stdout, "Yalzi v%s, (C) 2012-2013 n.redini@gmail.com nebirhos@aol.com pelldav@gmail.com\n", VERSION);
 }
 
 void usage()
 {
-    printf("Usage:\n  yalzi -[c|x] FILE [OUT_FILE]\n\n");
-    printf("Options:\n");
-    printf("  -c, [--compress=FILE]            # Compress FILE to OUT_FILE [default OUT_FILE: FILE.yz]\n");
-    printf("  -x, [--extract=FILE]             # Extract from FILE to OUT_FILE\n");
-    printf("  -v, [--verbose]                  # Print useless info\n");
-    printf("  -h, [--help]                     # Show this help message and quit\n");
-    printf("  -V, [--version]                  # Show Yalzi version number and quit\n");
+    fprintf(stdout, "Usage:\n  yalzi -[c|x] FILE [OUT_FILE]\n\n");
+    fprintf(stdout, "Options:\n");
+    fprintf(stdout, "  -c, [--compress=FILE]            # Compress FILE to OUT_FILE [default OUT_FILE: FILE.yz]\n");
+    fprintf(stdout, "  -x, [--extract=FILE]             # Extract from FILE to OUT_FILE\n");
+    fprintf(stdout, "  -v, [--verbose]                  # Print useless info\n");
+    fprintf(stdout, "  -h, [--help]                     # Show this help message and quit\n");
+    fprintf(stdout, "  -V, [--version]                  # Show Yalzi version number and quit\n");
 }
 
 
 int main(int argc, char *argv[])
 {
-    char *archive_path, *file_path = NULL;
+    char *archive_path = NULL, *file_path = NULL;
     char mode = 0;
-    BITIO* in_file, *out_file;
+    BITIO* in_file = NULL, *out_file = NULL;
     int i;
+    verbose_flag = 0;
 
     while (1) {
         static struct option long_options[] = {
             /* These options don't set a flag.
-               We distinguish them by their indices. */
+               We distinguish them by their indices*/
             {"compress", required_argument, 0, 'c'},
             {"extract",  required_argument, 0, 'x'},
             {"help",     no_argument,       0, 'h'},
@@ -113,44 +115,46 @@ int main(int argc, char *argv[])
     }
     else {
         /* no mode specified */
-        printf("Error: no mode specified!\n");
+        fprintf(stdout, "Error: no mode specified!\n");
         usage();
         return -1;
     }
     if (verbose_flag) {
-        printf("File path: %s\n", file_path);
-        printf("Archive path: %s\n", archive_path);
+        fprintf(stdout, "File path: %s\n", file_path);
+        fprintf(stdout, "Archive path: %s\n", archive_path);
     }
 
 
     /* Compression */
     if (mode == 'c') {
-        if (verbose_flag) printf ("Compression mode\n");
+        if (verbose_flag) fprintf (stdout, "Compression mode\n");
         if ((in_file = bitio_open(file_path, O_RDONLY)) == NULL) {
-            printf("Error: cannot open %s!\n", file_path);
+            fprintf(stdout, "Error: cannot open %s!\n", file_path);
             return -1;
         }
         if ((out_file = bitio_open(archive_path, O_WRONLY)) == NULL) {
-            printf("Error: cannot open %s!\n", archive_path);
+            fprintf(stdout, "Error: cannot open %s!\n", archive_path);
             return -1;
         }
         compress(in_file, out_file);
+        bitio_close(in_file);
+        bitio_close(out_file);
     }
     /* Decompression */
     else if (mode == 'x') {
-        if (verbose_flag) printf ("Decompression mode\n");
+        if (verbose_flag) fprintf (stdout, "Decompression mode\n");
         if ((in_file = bitio_open(archive_path, O_RDONLY)) == NULL) {
-            printf("Error: cannot open %s!\n", archive_path);
+            fprintf(stdout, "Error: cannot open %s!\n", archive_path);
             return -1;
         }
         if ((out_file = bitio_open(file_path, O_WRONLY)) == NULL) {
-            printf("Error: cannot open %s!\n", file_path);
+            fprintf(stdout, "Error: cannot open %s!\n", file_path);
             return -1;
         }
         decompress(in_file, out_file);
+        bitio_close(in_file);
+        bitio_close(out_file);
     }
 
-    bitio_close(in_file);
-    bitio_close(out_file);
     return 0;
 }
