@@ -47,7 +47,7 @@ compress(BITIO* in_file, BITIO* out_file)
   memset(byte_buff, 0, BYTEBUFFERSIZE * sizeof(uint8_t));
 
   if (verbose_flag)
-    if ((write(STDOUT_FILENO, "Start compressing ... \nPercentage of the Compressed File\n0        50       100\n",  82))){/*Shut up compiler*/}
+    if ((write(STDOUT_FILENO, "Start compressing ... \nPercentage of the Compressed File\n0        50       100\n",  80))){/*Shut up compiler*/}
     
   while(!feof(in_buffered_file) && !ferror(in_buffered_file) && !err_val){
 
@@ -56,7 +56,7 @@ compress(BITIO* in_file, BITIO* out_file)
 
     if (verbose_flag){
       percentage = ((file_read*100)/file_length);
-      while( percentage >= progress){
+      while( percentage > progress){
         progress = progress + 5;
         if ((write(STDOUT_FILENO, "-",  2))){/*Shut up compiler*/}
       }

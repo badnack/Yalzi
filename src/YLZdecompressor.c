@@ -91,7 +91,7 @@ decompress(BITIO* in_file, BITIO* out_file)
     if ((write(STDOUT_FILENO, "Inizializing Hash Table\n",  25))){/*Shut up compiler*/}
   if((dt = dec_table_create()) == NULL)
     return -1;
-  if(fstat(in_file->fd,&file_stat) < 0)    
+  if(fstat(in_file->fd, &file_stat) < 0)    
     return 1;
   
   file_length = file_stat.st_size;
@@ -99,18 +99,18 @@ decompress(BITIO* in_file, BITIO* out_file)
   index_mask = (1 << index_length) - 1;
   c_label = FIRSTAVCHILD;
   err_val = 0;
-
-  if (verbose_flag)
-    if ((write(STDOUT_FILENO, "Start decompressing ... \nPercentage of the Decompressed File\n0         50         100\n",  87))){/*Shut up compiler*/}
   file_read = 0;
 
+  if (verbose_flag)
+    if ((write(STDOUT_FILENO, "Start decompressing ... \nPercentage of the Decompressed File\n0        50       100\n",  84))){/*Shut up compiler*/}
+  
   while(1){
     current_index = 0;
     bit_read = bitio_read(in_file, &current_index, index_length);
-    file_read += bit_read / 8;
+    file_read += bit_read;
     if (verbose_flag){
-      percentage = ((file_read*100) / file_length);
-      while( percentage >= progress){
+      percentage = (((file_read / 8)*100) / file_length);
+      while(percentage > progress){
         progress = progress + 5;
         if ((write(STDOUT_FILENO, "-",  2))){/*Shut up compiler*/}
       }
