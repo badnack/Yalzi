@@ -7,10 +7,10 @@ BLUE_BG="\033[0;44m"
 NO_COLOR="\033[00m"
 
 
-all: bin spec
+all: libraries spec ylz
 	@echo $(GREEN_BG)DONE!$(NO_COLOR)
 
-bin: libraries
+ylz:
 	@echo $(BLUE_BG)Compiling binaries...$(NO_COLOR)
 	$(MAKE) -C src/
 
@@ -22,7 +22,7 @@ $(EXTLIB_CONF):
 	@echo $(BLUE_BG)Configuring external libraries...$(NO_COLOR)
 	cd lib/cspec && ./autogen.sh && ./configure
 
-spec: libraries bin
+spec: libraries ylz
 	@echo $(BLUE_BG)Compiling spec...$(NO_COLOR)
 	$(MAKE) -C spec/
 
