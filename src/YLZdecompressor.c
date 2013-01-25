@@ -193,7 +193,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   fclose(out_buffered_file);
 
   if (verbose_flag)
-    if ((write(STDOUT_FILENO, "Destroing Hash Table.\nDecompression terminated.\n",  49))){/*Shut up compiler*/}
+    if ((write(STDOUT_FILENO, "\nDestroing Hash Table.\nDecompression terminated.\n",  50))){/*Shut up compiler*/}
 
   return err_val;
 }
