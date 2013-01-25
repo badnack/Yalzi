@@ -87,7 +87,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL)
     return -1;
   if(verbose_flag) 
-    fprintf(stdout, "Inizialize Hash Table\n");
+    if ((write(STDOUT_FILENO, "Inizializing Hash Table\n",  25))){/*Shut up compiler*/}
   if((dt = dec_table_create()) == NULL)
     return -1;
   if(fstat(in_file->fd,&file_stat) < 0)    
@@ -98,9 +98,8 @@ decompress(BITIO* in_file, BITIO* out_file)
   index_mask = (1 << index_length) - 1;
   c_label = FIRSTAVCHILD;
   err_val = 0;
-  if (verbose_flag){
-    fprintf(stdout, "Start decompressing ... \nPercentage of the Decompressed File\n0         50         100\n");
-  }
+  if (verbose_flag)
+    if ((write(STDOUT_FILENO, "Start decompressing ... \nPercentage of the Decompressed File\n0         50         100\n",  89))){/*Shut up compiler*/}
 
   while(1){
     current_index = 0;
@@ -110,7 +109,7 @@ decompress(BITIO* in_file, BITIO* out_file)
       percentage = ((file_read*100)/file_length);
       while( percentage >= progress){
         progress = progress + 5;
-        fprintf(stdout, "-");
+        if ((write(STDOUT_FILENO, "-",  1))){/*Shut up compiler*/}
       }
     }
     if(bit_read == -1 || (env_var)bit_read < index_length || current_index > c_label){
@@ -189,9 +188,8 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_destroy(dt);
   fflush(out_buffered_file);
   fclose(out_buffered_file);
-  if (verbose_flag){
-    fprintf(stdout, "Destroy Hash Table.\nCompression terminate.\n");
-  }
+  if (verbose_flag)
+    if ((write(STDOUT_FILENO, "Destroing Hash Table.\nDecompression terminated.\n",  50))){/*Shut up compiler*/}
 
   return err_val;
 }

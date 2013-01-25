@@ -30,8 +30,8 @@ compress(BITIO* in_file, BITIO* out_file)
     errno = EINVAL;
     return -1;
   }
-  if(verbose_flag) 
-    fprintf(stdout, "Inizializing Hash Table\n");
+  if(verbose_flag)
+    if ((write(STDOUT_FILENO, "Inizializing Hash Table\n",  25))){/*Shut up compiler*/}
   if((ht = hashtable_create()) == NULL)
     return -1;
   if((in_buffered_file = fdopen(in_file->fd, "r")) == NULL)
@@ -48,7 +48,7 @@ compress(BITIO* in_file, BITIO* out_file)
   memset(byte_buff, 0, BYTEBUFFERSIZE * sizeof(uint8_t));
 
   if (verbose_flag)
-    fprintf(stdout, "Start compressing ... \nPercentage of the Compressed File\n0         50         100\n");
+    if ((write(STDOUT_FILENO, "Start compressing ... \nPercentage of the Compressed File\n0         50         100\n",  85))){/*Shut up compiler*/}
     
   while(!feof(in_buffered_file) && !ferror(in_buffered_file) && !err_val){
 
@@ -58,7 +58,7 @@ compress(BITIO* in_file, BITIO* out_file)
       percentage = ((file_read*100)/file_length);
       while( percentage >= progress){
         progress = progress + 5;
-        fprintf(stdout, "-");
+        if ((write(STDOUT_FILENO, "-",  1))){/*Shut up compiler*/}
       }
     }
     for(i = 0; i < byte_read; i++){
@@ -107,7 +107,7 @@ compress(BITIO* in_file, BITIO* out_file)
   fclose(in_buffered_file);
 
   if (verbose_flag)
-    fprintf(stdout, "Destroing Hash Table.\nCompression terminated.\n");
+    if ((write(STDOUT_FILENO, "Destroing Hash Table.\nCompression terminated.\n",  48))){/*Shut up compiler*/}
 
   return err_val;
 }
