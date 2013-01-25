@@ -1,4 +1,3 @@
-#include "YLZdecompressor.h"
 #include <errno.h>
 #include <limits.h>
 #include <unistd.h>
@@ -6,7 +5,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-extern int verbose_flag;
+#include "YLZoptions.h"
+#include "YLZdecompressor.h"
+
 
 static void
 pre_append(dec_table* current, dec_table* parent)
@@ -98,15 +99,17 @@ decompress(BITIO* in_file, BITIO* out_file)
   index_mask = (1 << index_length) - 1;
   c_label = FIRSTAVCHILD;
   err_val = 0;
+
   if (verbose_flag)
     if ((write(STDOUT_FILENO, "Start decompressing ... \nPercentage of the Decompressed File\n0         50         100\n",  89))){/*Shut up compiler*/}
+  file_read = 0;
 
   while(1){
     current_index = 0;
     bit_read = bitio_read(in_file, &current_index, index_length);
-    file_read += bit_read/8;
+    file_read += bit_read / 8;
     if (verbose_flag){
-      percentage = ((file_read*100)/file_length);
+      percentage = ((file_read*100) / file_length);
       while( percentage >= progress){
         progress = progress + 5;
         if ((write(STDOUT_FILENO, "-",  1))){/*Shut up compiler*/}
@@ -188,6 +191,7 @@ decompress(BITIO* in_file, BITIO* out_file)
   dec_table_destroy(dt);
   fflush(out_buffered_file);
   fclose(out_buffered_file);
+
   if (verbose_flag)
     if ((write(STDOUT_FILENO, "Destroing Hash Table.\nDecompression terminated.\n",  50))){/*Shut up compiler*/}
 

@@ -1,9 +1,10 @@
 /**
- * @file LZ78decompressor.h
+ * @file YLZdecompressor.h
  *
  * @author Nilo Redini
  * @author Francesco Disperati
  * @author Davide Pellegrino
+ *
  * Variables and functions definitions for LZ78 decompression
  *
 */
@@ -11,6 +12,7 @@
 #ifndef _LZ78DECOMPRESSOR_H_
 #define _LZ78DECOMPRESSOR_H_
 
+#include "YLZoptions.h"
 #include "YLZhashtable.h"
 #include "bitio.h"
 
