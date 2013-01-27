@@ -11,7 +11,7 @@
 #ifndef _YLZOPTIONS_H
 #define _YLZOPTIONS_H
 
-#define MAX_CHAR_VRB 255
+#define MAX_CHAR_VRB 256
 
 int verbose_flag;
 

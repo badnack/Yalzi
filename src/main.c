@@ -44,10 +44,11 @@ int main(int argc, char *argv[])
   char mode = 0;
   BITIO* in_file = NULL, *out_file = NULL;
   int i;
-  int def_alloc;
+  int cst_alloc_fp, cst_alloc_ap;
 
   verbose_flag = 0;
-  def_alloc = 0;
+  cst_alloc_fp = 0;
+  cst_alloc_ap = 0;
 
   while (1) {
     static struct option long_options[] = {
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
     if (optind < argc)
       archive_path = argv[optind];
     else{
-      def_alloc = 1;
+      cst_alloc_ap = 1;
       if (asprintf(&archive_path, "%s.ylz", file_path) == -1) {
         fprintf(stderr, "Error: unable to allocate memory!\n");
         if (archive_path != NULL)
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
       file_path = argv[optind];
     }
     else {
-      def_alloc = 1;
+      cst_alloc_fp = 1;
       if (asprintf(&file_path, "%s.out", archive_path) == -1) {
         fprintf(stderr, "Error: unable to allocate memory!\n");
         if (file_path != NULL)
@@ -154,19 +155,23 @@ int main(int argc, char *argv[])
     print_verbose("Compression mode\n");
     if ((in_file = bitio_open(file_path, O_RDONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", file_path);
-      if (def_alloc)
+      if (cst_alloc_ap)
         free(archive_path);
       return -1;
     }
     if ((out_file = bitio_open(archive_path, O_WRONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", archive_path);
-      if (def_alloc)
+      if (cst_alloc_ap)
         free(archive_path);
       return -1;
     }
     compress(in_file, out_file);
     bitio_close(in_file);
     bitio_close(out_file);
+
+    if (cst_alloc_ap)
+      free(archive_path);
+
   }
 
   /* Decompression */
@@ -174,24 +179,24 @@ int main(int argc, char *argv[])
     print_verbose("Deompression mode\n");
     if ((in_file = bitio_open(archive_path, O_RDONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", archive_path);
-      if (def_alloc)
-        free(archive_path);
+      if (cst_alloc_fp)
+        free(file_path);
       return -1;
     }
     if ((out_file = bitio_open(file_path, O_WRONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", file_path);
-      if (def_alloc)
-        free(archive_path);
+      if (cst_alloc_ap)
+        free(file_path);
       return -1;
     }
 
     decompress(in_file, out_file);
     bitio_close(in_file);
     bitio_close(out_file);
-  }
 
-  if (def_alloc)
-    free(archive_path);
+    if (cst_alloc_fp)
+      free(file_path);
+  }
 
   return 0;
 }
