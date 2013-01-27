@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     }
     if ((out_file = bitio_open(file_path, O_WRONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", file_path);
-      if (cst_alloc_ap)
+      if (cst_alloc_fp)
         free(file_path);
       return -1;
     }
