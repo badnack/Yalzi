@@ -1,3 +1,14 @@
+/**
+ * @file main.c
+ *
+ * @author Nilo Redini
+ * @author Francesco Disperati
+ * @author Davide Pellegrino
+ *
+ * Y.A.L.Z.I.: yet another LZ78 implementation.
+ *
+*/
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <getopt.h>

@@ -2,16 +2,16 @@
  * @file bitio.h
  *
  *
+ * @author Nilo Redini
  * @author Francesco Disperati
  * @author Davide Pellegrino
- * @author Nilo Redini Mat:305926
  *
  * Variables and funcitons definition to manage Bit buffered files.
  *
  */
 
-#ifndef _BITFILE_H_
-#define _BITFILE_H_
+#ifndef _BITIO_H_
+#define _BITIO_H_
 
 #include <stdint.h>
 #include <string.h>

@@ -5,12 +5,12 @@
  * @author Francesco Disperati
  * @author Davide Pellegrino
  *
- * Variables and functions definitions for LZ78 decompression
+ * Variables and functions definitions for YALZI decompression
  *
 */
 
-#ifndef _LZ78DECOMPRESSOR_H_
-#define _LZ78DECOMPRESSOR_H_
+#ifndef _YLZDECOMPRESSOR_H_
+#define _YLZDECOMPRESSOR_H_
 
 #include "YLZoptions.h"
 #include "YLZhashtable.h"

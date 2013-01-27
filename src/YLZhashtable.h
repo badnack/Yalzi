@@ -1,15 +1,16 @@
 /**
- * @file hashtable.h
+ * @file YLZhashtable.h
  *
  * @author Nilo Redini
  * @author Francesco Disperati
  * @author Davide Pellegrino
- * Variables and functions definitions for LZ78 hash table
+ *
+ * Variables and functions definitions for YALZI hash table
  *
 */
 
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
+#ifndef _YLZHASHTABLE_H
+#define _YLZHASHTABLE_H
 
 #include <stdlib.h>
 #include <stdio.h>

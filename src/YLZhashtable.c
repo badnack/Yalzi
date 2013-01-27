@@ -39,7 +39,12 @@ hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_valu
     return -1;
 
   index = get_hash(f_label, c_value);
-  while(ht[index].c_label) //There is ever a empty entry in the hash table because this function is called MAXNODES-1 times before resetting the entire table
+  /* There is always an empty entry in the hash table, because
+     this function is called (at most) MAXNODES times before to reset the whole table.
+     MAXNODES << HASH_TABLE_SIZE; this give us a costant time to retrieve data from the
+     has table (O(1)).
+  */
+  while(ht[index].c_label)
     index = (index + 1) % HASHTABLE_SIZE;
 
   ht[index].c_label = c_label;

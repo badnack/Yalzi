@@ -1,15 +1,16 @@
 /**
- * @file LZ78compressor.h
+ * @file YLZcompressor.h
  *
  * @author Nilo Redini
  * @author Francesco Disperati
  * @author Davide Pellegrino
- * Variables and functions definitions for LZ78 compression
+ *
+ * Variables and functions definitions for YALZI compression
  *
 */
 
-#ifndef _LZ78COMPRESSOR_H_
-#define _LZ78COMPRESSOR_H_
+#ifndef _YLZCOMPRESSOR_H_
+#define _YLZCOMPRESSOR_H_
 
 #include "bitio.h"
 
@@ -17,7 +18,7 @@
 
 /**
    Compress a file.
-   
+
    @param in_file Input file
    @param out_file Output file
    @return zero on success. On error, -1 is returned, and errno is set appropriately.

@@ -83,17 +83,26 @@ decompress(BITIO* in_file, BITIO* out_file)
     return -1;
   }
 
-  if(in_file->mode != O_RDONLY || out_file->mode != O_WRONLY)
+  if(in_file->mode != O_RDONLY || out_file->mode != O_WRONLY){
+    print_verbose("Error: unable to open input/output file");
     return -1;
-  if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL)
+  }
+  if((out_buffered_file = fdopen(out_file->fd, "w")) == NULL){
+    print_verbose("Error: unable to open output file");
     return -1;
-  if(verbose_flag) 
-    if ((write(STDOUT_FILENO, "Inizializing Hash Table\n",  25))){/*Shut up compiler*/}
-  if((dt = dec_table_create()) == NULL)
+  }
+
+  print_verbose("Initializing the decompression table");
+
+  if((dt = dec_table_create()) == NULL){
+    print_verbose("Error: unable to create the decompression table");
     return -1;
-  if(fstat(in_file->fd, &file_stat) < 0)    
+  }
+  if(fstat(in_file->fd, &file_stat) < 0){
+    print_verbose("Error: file does not exist");
     return 1;
-  
+  }
+
   file_length = file_stat.st_size;
   index_length = FIRSTINDEXLEN;
   index_mask = (1 << index_length) - 1;
@@ -101,20 +110,22 @@ decompress(BITIO* in_file, BITIO* out_file)
   err_val = 0;
   file_read = 0;
 
-  if (verbose_flag)
-    if ((write(STDOUT_FILENO, "Start decompressing ... \nPercentage of the Decompressed File\n0        50       100\n",  84))){/*Shut up compiler*/}
-  
+  print_verbose("Start decompressing ... \nPercentage of the Decompressed File\n0        50       100\n");
+
   while(1){
+
     current_index = 0;
     bit_read = bitio_read(in_file, &current_index, index_length);
     file_read += bit_read;
+
     if (verbose_flag){
       percentage = (((file_read / 8)*100) / file_length);
       while(percentage > progress){
         progress = progress + 5;
-        if ((write(STDOUT_FILENO, "-",  2))){/*Shut up compiler*/}
+        print_verbose("-");
       }
     }
+
     if(bit_read == -1 || (env_var)bit_read < index_length || current_index > c_label){
       err_val = -1;
       break;
@@ -188,12 +199,15 @@ decompress(BITIO* in_file, BITIO* out_file)
     }
   }
 
+  if(!err_val)
+    print_verbose("Decompression succeded!\n");
+  else
+    print_verbose("Error: Decompression failed!\n");
+
+  print_verbose("Destroying the decompression table\n");
   dec_table_destroy(dt);
   fflush(out_buffered_file);
   fclose(out_buffered_file);
-
-  if (verbose_flag)
-    if ((write(STDOUT_FILENO, "\nDestroing Hash Table.\nDecompression terminated.\n",  50))){/*Shut up compiler*/}
 
   return err_val;
 }
