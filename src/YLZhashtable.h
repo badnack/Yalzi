@@ -34,16 +34,21 @@ typedef struct hashtable_entry hashtable_entry;
 /** hashtable definition */
 typedef struct hashtable_entry hashtable;
 
-/** LZ78 Hash table entry definition*/
+/** LZ78 Hash table entry definition */
+/*
+  Here are not used env_var variables because otherwise in 64-bit
+  environments the allocated memory could be about 200 MB without
+  reach any great benefits.
+*/
 struct hashtable_entry{
   /* Key */
   /** father label */
-  env_var f_label;
+  uint32_t f_label;
   /** child value */
-  env_var c_value; //Only 8 bits are used
+  uint32_t c_value; //Only 8 bits are used
   /* Value */
   /** child label */
-  env_var c_label;
+  uint32_t c_label;
 };
 
 /**

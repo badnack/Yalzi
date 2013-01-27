@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  print_verbose("File path: %s\n Archive path: %s\n", file_path, archive_path);
+  print_verbose("File path: %s\nArchive path: %s\n", file_path, archive_path);
 
   /* Compression */
   if (mode == 'c') {
@@ -165,13 +165,13 @@ int main(int argc, char *argv[])
         free(archive_path);
       return -1;
     }
+
     compress(in_file, out_file);
     bitio_close(in_file);
     bitio_close(out_file);
 
     if (cst_alloc_ap)
       free(archive_path);
-
   }
 
   /* Decompression */
