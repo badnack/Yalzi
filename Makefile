@@ -34,6 +34,3 @@ clean:
 	$(MAKE) clean -C spec/
 	$(MAKE) clean -C src/
 	$(MAKE) clean -C lib/cspec/
-
-fixme:
-	@grep -riIn FIXME src/ spec/

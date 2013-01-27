@@ -19,7 +19,7 @@
 #include "bitio.h"
 
 /** Hash table size */
-#define HASHTABLE_SIZE 16777216 /* 24 bit for the index*/
+#define HASHTABLE_SIZE 8388608 /* 23 bit for the index*/
 /** Maximum amount of nodes allowed */
 #define MAXNODES 4194303 /* 22 bit */
 /** Root nSode code */

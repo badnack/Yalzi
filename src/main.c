@@ -30,7 +30,7 @@ void usage()
 {
   fprintf(stdout, "Usage:\n  yalzi -[c|x] FILE [OUT_FILE]\n\n");
   fprintf(stdout, "Options:\n");
-  fprintf(stdout, "  -c, [--compress=FILE]            # Compress FILE to OUT_FILE [default OUT_FILE: FILE.yz]\n");
+  fprintf(stdout, "  -c, [--compress=FILE]            # Compress FILE to OUT_FILE [default OUT_FILE: FILE.ylz]\n");
   fprintf(stdout, "  -x, [--extract=FILE]             # Extract from FILE to OUT_FILE\n");
   fprintf(stdout, "  -v, [--verbose]                  # Print useless info\n");
   fprintf(stdout, "  -h, [--help]                     # Show this help message and quit\n");
@@ -44,8 +44,10 @@ int main(int argc, char *argv[])
   char mode = 0;
   BITIO* in_file = NULL, *out_file = NULL;
   int i;
+  int def_alloc;
 
   verbose_flag = 0;
+  def_alloc = 0;
 
   while (1) {
     static struct option long_options[] = {
@@ -109,10 +111,11 @@ int main(int argc, char *argv[])
     /* Check if ARCHIVE path is passed */
     if (optind < argc)
       archive_path = argv[optind];
-    else {
-      if(asprintf(&archive_path, "%s.yz", file_path) == -1){
+    else{
+      def_alloc = 1;
+      if (asprintf(&archive_path, "%s.ylz", file_path) == -1) {
         fprintf(stderr, "Error: unable to allocate memory!\n");
-        if(archive_path != NULL)
+        if (archive_path != NULL)
           free(archive_path);
         return -1;
       }
@@ -125,13 +128,14 @@ int main(int argc, char *argv[])
       file_path = argv[optind];
     }
     else {
-      if(asprintf(&file_path, "%s.out", archive_path) == -1){
+      def_alloc = 1;
+      if (asprintf(&file_path, "%s.out", archive_path) == -1) {
         fprintf(stderr, "Error: unable to allocate memory!\n");
-        if(file_path != NULL)
+        if (file_path != NULL)
           free(file_path);
         return -1;
       }
-      char* extension = strstr(file_path, ".yz");
+      char* extension = strstr(file_path, ".ylz");
       if (extension)
         *extension = '\0';
     }
@@ -142,42 +146,52 @@ int main(int argc, char *argv[])
     usage();
     return -1;
   }
-  if (verbose_flag) {
-    fprintf(stdout, "File path: %s\n", file_path);
-    fprintf(stdout, "Archive path: %s\n", archive_path);
-  }
 
+  print_verbose("File path: %s\n Archive path: %s\n", file_path, archive_path);
 
   /* Compression */
   if (mode == 'c') {
-    if (verbose_flag) fprintf (stdout, "Compression mode\n");
+    print_verbose("Compression mode\n");
     if ((in_file = bitio_open(file_path, O_RDONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", file_path);
+      if (def_alloc)
+        free(archive_path);
       return -1;
     }
     if ((out_file = bitio_open(archive_path, O_WRONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", archive_path);
+      if (def_alloc)
+        free(archive_path);
       return -1;
     }
     compress(in_file, out_file);
     bitio_close(in_file);
     bitio_close(out_file);
   }
+
   /* Decompression */
   else if (mode == 'x') {
-    if (verbose_flag) fprintf (stdout, "Decompression mode\n");
+    print_verbose("Deompression mode\n");
     if ((in_file = bitio_open(archive_path, O_RDONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", archive_path);
+      if (def_alloc)
+        free(archive_path);
       return -1;
     }
     if ((out_file = bitio_open(file_path, O_WRONLY)) == NULL) {
       fprintf(stderr, "Error: cannot open %s!\n", file_path);
+      if (def_alloc)
+        free(archive_path);
       return -1;
     }
+
     decompress(in_file, out_file);
     bitio_close(in_file);
     bitio_close(out_file);
   }
+
+  if (def_alloc)
+    free(archive_path);
 
   return 0;
 }

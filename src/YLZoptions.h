@@ -20,6 +20,6 @@ int verbose_flag;
 
    @param str String to write
 */
-inline void print_verbose(char* str);
+inline void print_verbose(char* str, ...);
 
 #endif

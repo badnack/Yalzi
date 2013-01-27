@@ -15,13 +15,13 @@ init_dictionary(hashtable* ht)
 {
   int i;
 
-  if(ht == NULL)
+  if (ht == NULL)
     return -1;
 
   memset(ht, 0, HASHTABLE_SIZE * sizeof(hashtable));
 
-  for(i = 0; i < FIRSTAVCHILD - 1; i++){
-    if(hashtable_insert(ht, ROOT, (env_var)i+1, (env_var)i) == -1){
+  for (i = 0; i < FIRSTAVCHILD - 1; i++) {
+    if (hashtable_insert(ht, ROOT, (env_var)i+1, (env_var)i) == -1) {
       hashtable_destroy(ht);
       return -1;
     }
@@ -35,7 +35,7 @@ hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_valu
 {
   uint32_t index;
 
-  if(ht == NULL || c_label > MAXNODES)
+  if (ht == NULL || c_label > MAXNODES)
     return -1;
 
   index = get_hash(f_label, c_value);
@@ -44,7 +44,7 @@ hashtable_insert(hashtable* ht, env_var f_label, env_var c_label, env_var c_valu
      MAXNODES << HASH_TABLE_SIZE; this give us a costant time to retrieve data from the
      has table (O(1)).
   */
-  while(ht[index].c_label)
+  while (ht[index].c_label)
     index = (index + 1) % HASHTABLE_SIZE;
 
   ht[index].c_label = c_label;
@@ -59,12 +59,12 @@ hashtable_get_index(hashtable* ht, env_var f_label, env_var c_value)
 {
   uint32_t h_index;
 
-  if(ht == NULL)
+  if (ht == NULL)
     return -1;
 
   h_index = get_hash(f_label, c_value);
 
-  while(ht[h_index].c_label && (ht[h_index].c_value != c_value || ht[h_index].f_label != f_label))
+  while (ht[h_index].c_label && (ht[h_index].c_value != c_value || ht[h_index].f_label != f_label))
     h_index = (h_index + 1) % HASHTABLE_SIZE;
 
   return ht[h_index].c_label;
@@ -75,10 +75,11 @@ hashtable_create()
 {
   hashtable* ht;
 
-  if((ht = (hashtable_entry*)calloc(HASHTABLE_SIZE, sizeof(hashtable_entry))) == NULL )
+  if ((ht = (hashtable_entry*)calloc(HASHTABLE_SIZE, sizeof(hashtable_entry))) == NULL )
     return NULL;
-  if(init_dictionary(ht) == -1)
+  if (init_dictionary(ht) == -1)
     return NULL;
+
   return ht;
 }
 
