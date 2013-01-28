@@ -5,7 +5,7 @@ EXTLIB_CONF=lib/cspec/Makefile
 GREEN_BG="\033[0;42m"
 BLUE_BG="\033[0;44m"
 NO_COLOR="\033[00m"
-
+DOC=doc
 
 all: libraries spec ylz
 	@echo $(GREEN_BG)DONE!$(NO_COLOR)
@@ -34,3 +34,9 @@ clean:
 	$(MAKE) clean -C spec/
 	$(MAKE) clean -C src/
 	$(MAKE) clean -C lib/cspec/
+
+clean_doc:
+	rm -rf $(DOC)
+
+doc:
+	doxygen config-file
