@@ -12,17 +12,17 @@
 static void
 pre_append(dec_table* current, dec_table* parent)
 {
-    if (current->word_length < (current->length + parent->length)) {
-      current->word_length = current->length + parent->length;
-      current->word = realloc(current->word, current->word_length);
+    if (current->word_size < (current->word_length + parent->word_length)) {
+      current->word_size = current->word_length + parent->word_length;
+      current->word = realloc(current->word, current->word_size);
     }
 
-    if (current->length > 0) {
-      memmove(current->word + parent->length, current->word, current->length);
+    if (current->word_length > 0) {
+      memmove(current->word + parent->word_length, current->word, current->word_length);
     }
 
-    memcpy(current->word, parent->word, parent->length);
-    current->length += parent->length;
+    memcpy(current->word, parent->word, parent->word_length);
+    current->word_length += parent->word_length;
 }
 
 dec_table*
@@ -35,7 +35,7 @@ dec_table_create()
     return NULL;
 
   for (i = 1; i < FIRSTAVCHILD; i++) {
-    dt[i].length = 1;
+    dt[i].word_length = 1;
     dt[i].f_label = ROOT;
 
     if ((dt[i].word = malloc(1 * sizeof(uint8_t))) == NULL) {
@@ -139,39 +139,39 @@ decompress(BITIO* in_file, BITIO* out_file)
 
     current = &dt[current_index];
 
+    /* In first round no previous child exists */
     if (c_label > FIRSTAVCHILD) {
       last = &dt[c_label - 1];
-      if (last->length > 0)
-        last->length = 0;
+      if (last->word_length > 0)
+        last->word_length = 0;
 
       if (current_index == (c_label - 1)) {
         dte = &dt[last->f_label];
-        while (dte->length == 1 && dte->f_label != ROOT) {
+        while (dte->word_length == 1 && dte->f_label != ROOT) {
           pre_append(last, dte);
           dte = &dt[dte->f_label];
         }
         pre_append(last, dte);
-        last->length++;
-        if (last->word_length < last->length) {
-          last->word_length = last->length;
-          last->word = realloc(last->word, last->word_length);
+        last->word_length++;
+        if (last->word_size < last->word_length) {
+          last->word_size = last->word_length;
+          last->word = realloc(last->word, last->word_size);
         }
-        last->word[last->length - 1] =  last->word[0];
+        last->word[last->word_length - 1] =  last->word[0];
       }
       else {
-        if (last->word_length == 0) {
-          last->word_length = 1;
+        if (last->word_size == 0) {
+          last->word_size = 1;
           last->word = realloc(last->word, 1);
         }
-        last->length = 1;
+        last->word_length = 1;
         if (last->word == NULL) {
           err_val = -1;
           break;
         }
-
-        if (current_index > (FIRSTAVCHILD - 1) && current->length == 1) {
+        if (current_index > (FIRSTAVCHILD - 1) && current->word_length == 1) {
           dte = &dt[current->f_label];
-          while (dte->length == 1 && dte->f_label != ROOT) {
+          while (dte->word_length == 1 && dte->f_label != ROOT) {
             pre_append(current, dte);
             dte = &dt[dte->f_label];
           }
@@ -183,7 +183,7 @@ decompress(BITIO* in_file, BITIO* out_file)
       }
     }
 
-    if (fwrite(current->word, 1, current->length, out_buffered_file) != current->length) {
+    if (fwrite(current->word, 1, current->word_length, out_buffered_file) != current->word_length) {
       err_val = -1;
       break;
     }
