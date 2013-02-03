@@ -37,4 +37,5 @@ clean:
 	rm -rf $(DOC)
 
 doc:
+	@echo $(BLUE_BG)Compiling documentation...$(NO_COLOR)
 	doxygen config-file

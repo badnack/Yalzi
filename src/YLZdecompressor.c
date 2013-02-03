@@ -169,6 +169,8 @@ decompress(BITIO* in_file, BITIO* out_file)
           err_val = -1;
           break;
         }
+
+        /* current value has to be completed */
         if (current_index > (FIRSTAVCHILD - 1) && current->word_length == 1) {
           dte = &dt[current->f_label];
           while (dte->word_length == 1 && dte->f_label != ROOT) {
