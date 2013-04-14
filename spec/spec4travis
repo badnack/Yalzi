@@ -3,7 +3,7 @@
 spec_path = File.join( File.dirname(__FILE__), 'spec' )
 
 start_time = Time.now
-result = `#{spec_path}`
+result = `#{spec_path}`.split("\n")
 end_time = Time.now
 
 ok = result.grep( /OK: / ).size
