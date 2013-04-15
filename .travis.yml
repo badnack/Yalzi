@@ -2,6 +2,6 @@ language: ruby
 
 before_script:
   - "git submodule update --init --recursive"
-  - "make all"
+  - "make spec"
 
 script: "./spec/spec4travis"
