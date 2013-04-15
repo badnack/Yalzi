@@ -1,6 +1,6 @@
 #include "YLZhashtable.h"
 
-static inline uint32_t
+inline uint32_t
 get_hash(env_var k1, env_var k2)
 {
   return ((k1 ^ 0x000000FF) *
