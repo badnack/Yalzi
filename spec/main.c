@@ -6,5 +6,6 @@ int main() {
   bitio_spec();
   YLZhashtable_spec();
 
+  integration_spec();
   return 0;
 }

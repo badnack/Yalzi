@@ -4,27 +4,7 @@
 #include "cspec.h"
 #include "cspec_output_verbose.h"
 
-/* Spec support functions */
-char read_char( const char* filename, int position, int delete ) {
-  FILE* fp = fopen( filename, "r" );
-  fseek( fp, position, SEEK_SET );
-  char c = fgetc(fp);
-  fclose( fp );
-  if ( delete ) remove( filename );
-  return c;
-}
 
-int file_size( const char* filename, int delete ) {
-  FILE* fp = fopen( filename, "r" );
-  fseek( fp, 0L, SEEK_END );
-  int size = ftell(fp);
-  fclose( fp );
-  if ( delete ) remove( filename );
-  return size;
-}
-
-
-/* Spec */
 DESCRIBE( bitio_open, " bitio_open( char* name, int mode )" )
 
   IT( "should return a valid BITIO pointer when opening a nonexistent file in WRITE mode" )
