@@ -23,7 +23,7 @@
 
 void version()
 {
-  fprintf(stdout, "Yalzi v%s, (C) 2012-2013 n.redini@gmail.com nebirhos@aol.com pelldav@gmail.com\n", VERSION);
+  fprintf(stdout, "Yalzi v%s, (C) 2012-2013 n.redini@gmail.com me@nebirhos.com pelldav@gmail.com\n", VERSION);
 }
 
 void usage()
